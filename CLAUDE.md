@@ -1,0 +1,78 @@
+# Study Planner
+
+A study planner **product** for many users (UPSC first, more tracks later), built collaboratively. Everything should be world class: fast, accessible, modular and well tested. It is also a learning journey: new tools are introduced one at a time, when first needed, with a plain explanation.
+
+## How we work (applies to every feature, however small)
+
+1. **Discuss before coding.** For each feature, list the possible approaches with their pros and cons. Recommend the best one, with its time and space complexity.
+2. **Discuss tech choices.** Agree on libraries, packages and stack changes before adding them. Give the trade-offs.
+3. **Step by step.** Never implement a whole feature at once.
+4. **One file at a time.** Write one file, explain what it does and why, and wait for review before moving to the next.
+5. **Quality bar:** best practices, LLD, SOLID principles, suitable design patterns and a clean folder structure.
+6. **Plug-and-unplug modularity.** Depend on abstractions (interfaces), inject dependencies and keep modules loosely coupled. A module should be swappable or removable without changes elsewhere. Add an abstraction only when it solves a real coupling, testing, reuse or ownership problem, never just for symmetry.
+7. **Proactive suggestions.** Raise improvements or better alternatives whenever you see them.
+8. **Model and effort reminders.** At the start of each task, and whenever the kind of work changes, start the reply with one line recommending the model and effort, e.g. `Suggested: Opus 5.5 · high`, plus a few words on why. If the current setting already fits, say so in that line. Guide:
+   - **Opus 5.5 · high**: architecture, planning, vision and roadmap discussions, design reviews, migrations and refactors across many files.
+   - **Opus 5.5 · extra high**: decisions that are hard to undo (data model, core architecture), or a bug that resisted a first attempt.
+   - **Opus 5.5 · max**: rarely, for the hardest problems after extra high has stalled.
+   - **Sonnet 5.5 · high**: implementing an agreed design that still needs care (a new module, tricky UI or animation).
+   - **Sonnet 5.5 · medium**: routine work: one file to a settled design, tests, small UI or wording tweaks.
+9. **Simple replies.** In discussions, answer in simple words and only what was asked; add extra detail only when it's important.
+10. **Record decisions.** Every architecture or tech decision gets a file in `docs/decisions/` (numbered `001-`, `002-`…; a number is never reused). A changed decision is marked "Replaced by" the new one, never deleted.
+
+## Status
+
+- Foundation decided: [docs/decisions/001-foundation.md](docs/decisions/001-foundation.md) (stack, architecture and the reasons).
+- Now: setting up the monorepo base, one file at a time.
+- Next: plan Phase 1 (goal, features, build order, non-goals) in `docs/product/`. **No feature code until that plan is agreed.**
+
+## Folder structure (target)
+
+Create folders only when there is a real file to put in them.
+
+```
+study-planner/
+├── apps/
+│   ├── web/            React app → static files on a CDN (public pages prerendered)
+│   └── api/            Fastify server + worker entry point
+├── packages/
+│   ├── contracts/      Zod schemas + types shared by web and api
+│   ├── config/         env validation, shared constants
+│   ├── ui/             design system: tokens, themes, wrapped Base UI components, motion, effects
+│   └── extension-sdk/  extension manifest types, contribution points, host API
+├── extensions/         one folder per feature (manifest, web/, api/, migrations/)
+└── docs/               decisions/, product/, architecture and operations notes
+```
+
+Inside `apps/api`, each module is feature-based outside and layered inside: `<name>.routes|controller|service|repository|types.ts`, with a public `index.ts`.
+
+**Dependency rules**
+
+- Apps use packages; apps never import each other.
+- Extensions import only `extension-sdk`, `contracts` and `ui`; never apps or other extensions. The host knows extensions only through their manifests.
+- API layers: route → controller → service → repository → database. Controllers never touch repositories; services own business rules and transactions; repositories only read and write their own module's tables.
+- Modules talk to each other only through their public `index.ts` (or events); never through another module's repository or tables.
+- Web and API share request/response types only through `packages/contracts`.
+
+**Naming**
+
+- Files: kebab-case with a role suffix, e.g. `task.service.ts`, `task.repository.ts`.
+- Contracts that classes implement: `interface` with an `I` prefix, e.g. `ITaskRepository`.
+- Pure data shapes (DTOs, entities, `FieldError`): `type` with no prefix.
+- Classes and types: PascalCase.
+- Indentation: 3 spaces (Prettier enforces it).
+
+## Frontend conventions
+
+- Function components and custom hooks, with pure functions for logic (`lib/`). Hooks hold behaviour; components only render.
+- No `Math.random()`/`Date.now()` during render. Use a seeded random for decoration and an injectable clock for time.
+- Phone-first: test 360×640 up to 390×844. Tappable things are at least 48px with 8px spacing.
+- Animation targets use `data-*` attributes, never styling classes. Respect reduced motion.
+
+## Deploying
+
+Not deployed yet. Hosting for the web app, the API and the database is decided at the deploy step. **Never link this folder to the `birthday` Vercel project** (Raj's separate birthday site): deploying from here would replace it.
+
+## Commands
+
+Use Node 24. Commands are added here as the monorepo is set up.

@@ -1,0 +1,174 @@
+# 001. Foundation: architecture and tech stack
+
+- **Date:** 2026-11-11
+- **Status:** Accepted
+
+## Context
+
+The planner is a product for many users (UPSC first, more tracks later), used mostly on phones. It must:
+
+- open fast and work offline (people study in places with weak signal);
+- let users install features (extensions), loading each one only for those who installed it;
+- run background work: reminders, scheduled jobs, event delivery;
+- keep data safe and correct, with payments coming later;
+- be ready for a native app wrapper later.
+
+Almost every screen is behind a login. Only a few public pages (home, features, pricing) need SEO.
+
+## Summary
+
+| Area | Choice |
+| --- | --- |
+| App shape | Monorepo: static web app + always-on API |
+| Monorepo tools | pnpm + Turborepo |
+| Database | PostgreSQL + Drizzle |
+| API framework | Fastify |
+| Backend structure | Layers: route → controller → service → repository |
+| Code style | Classes, manual dependency injection, patterns only where they help |
+| Validation | Zod, kept to contracts and validation files |
+| Web | React + React Router; public pages prerendered for SEO |
+| API data in the web app | TanStack Query |
+| UI building blocks | Base UI, wrapped in our own components |
+| Animation | Motion + plain CSS |
+| Features | Extensions, each in its own folder |
+| Code quality | oxlint + Prettier |
+
+## 1. App shape: monorepo with a static web app and an always-on API
+
+**Choice:** one repo holding `apps/web` (a React app built to static files on a CDN), `apps/api` (an always-on Fastify server plus a worker for background jobs), `packages/*` (shared code) and `extensions/*` (features).
+
+**Alternatives:** one Next.js app (simple, free hosting, serverless functions); Next.js as the web app with a separate API; a server-rendered web app.
+
+**Why:**
+
+- A static app cached by a service worker opens instantly and works offline.
+- Extensions load as separate pieces, only for users who installed them.
+- Reminders, jobs and live updates need a server that keeps running; serverless functions stop after each request.
+- Web and API import the same contracts, so a mismatch is caught in the editor, not by a user.
+- SEO is covered by prerendering public pages to HTML at build time.
+- React, Vite and Node change slowly compared with Next.js.
+
+## 2. Monorepo tools: pnpm + Turborepo
+
+**Choice:** pnpm installs packages and links our own packages together (workspaces); Turborepo runs tasks (`dev`, `build`, `lint`, `test`) across all of them.
+
+**Alternatives:** npm workspaces (slower, allows hidden dependencies); Nx (powerful but heavier).
+
+**Why:** pnpm is fast, saves disk space and is strict (a package can only import what it declares). Turborepo runs tasks in the right order, in parallel where possible, and skips work that hasn't changed.
+
+## 3. Database: PostgreSQL + Drizzle
+
+**Choice:** PostgreSQL, with Drizzle to define tables in TypeScript, generate migrations and write queries. Drizzle is used only inside repositories.
+
+**Alternatives:** MongoDB (flexible documents, links checked by our code); Kysely (closer to raw SQL, hand-written migrations and types); Prisma (its own schema language, heavier).
+
+**Why:**
+
+- Our data is relational: topics, targets, timetables, study sessions.
+- The database itself refuses broken data (foreign keys, unique and check constraints).
+- Reports like plan vs actual and streaks are simple SQL.
+- Strong transactions, needed for payments later.
+- Drizzle defines each table once, giving both the types and the migrations.
+
+## 4. API framework: Fastify
+
+**Choice:** Fastify.
+
+**Alternatives:** Express (most familiar; slower, weaker types, validation and docs by hand); Hono (tiny, runs anywhere; younger ecosystem for a long-running server).
+
+**Why:** fast, TypeScript-first, validates requests and generates API docs from our Zod contracts, and its plugin system keeps modules (and extensions) separate. Close to Express in style.
+
+## 5. Backend structure: layers in one direction
+
+**Choice:**
+
+```
+Route → Controller → Service → Repository → Database
+                        └──→ Provider (email, payments, other outside services)
+```
+
+- **Route:** URL, method, schemas and guards; calls a controller.
+- **Controller:** turns HTTP into plain input for a service, and back. Never touches a repository.
+- **Service:** business rules, transactions, calls to repositories and providers. Knows nothing about HTTP.
+- **Repository:** reads and writes its own module's tables. Decides no policy.
+- **Provider:** wraps an outside service behind our own interface.
+
+Each layer depends on the interfaces of the layer below it (Dependency Inversion). Modules talk to each other only through their public `index.ts` or events. Folders are feature-based outside and layered inside (`task.routes.ts`, `task.controller.ts`, `task.service.ts`, `task.repository.ts`, `index.ts`).
+
+**Alternatives:** everything in the route (tangles as features grow); full Clean Architecture or CQRS (more ceremony than we need).
+
+**Why:** each piece has one job, so it is easy to test and change; services work the same from HTTP, a background job or a test.
+
+## 6. Code style: classes, manual DI, patterns only where they help
+
+**Choice:**
+
+- **Classes** for anything with behaviour or dependencies (controllers, services, repositories, providers, factories, the database connection, the validator, the logger, errors). Plain `const` / `type` for pure data. Composition over inheritance. Stateless helpers are static-only classes (`HttpResponse.ok(data)`). Controller handlers are arrow-function properties, so passing `controller.list` to Fastify keeps `this`.
+- **Manual dependency injection:** every class gets its dependencies through its constructor; everything is wired in one composition root.
+- **Patterns only where they help:** add a pattern or abstraction only when it solves a real coupling, testing, reuse or ownership problem; never for symmetry.
+
+**Alternatives:** factory functions instead of classes; a DI library (tsyringe, inversify).
+
+**Why:** classes keep LLD, SOLID and design patterns visible in the code. Manual DI is explicit, needs no decorators, and makes fakes easy in tests. Fewer, purposeful abstractions keep the code readable.
+
+## 7. Validation: Zod, kept at the edges
+
+**Choice:** Zod appears only in shared contracts, `*.validation.ts` files and config. Services and repositories see plain TypeScript types. The `SchemaValidator` class accepts any Standard Schema (`@standard-schema/spec`), so controllers don't depend on Zod itself.
+
+**Alternatives:** wrapping Zod behind our own interface (a leaky abstraction, since schemas are Zod's own language).
+
+**Why:** abstract what is volatile or does I/O (databases, outside APIs); contain stable tools behind a boundary.
+
+## 8. Web: React + React Router, public pages prerendered
+
+**Choice:** React with React Router. Screens load only when opened. Public pages are prerendered to HTML at build time for SEO. The app is installable (PWA).
+
+**Alternatives:** TanStack Router (stronger type safety; its prerendering, TanStack Start, is younger).
+
+**Why:** mature, widely used, with prerendering built in.
+
+## 9. API data in the web app: TanStack Query
+
+**Choice:** TanStack Query, on top of our own small `fetch` client typed by the shared contracts.
+
+**Alternatives:** hand-written `useEffect` fetching on every screen.
+
+**Why:** caching, background refresh, no duplicate requests, instant updates after changes, and a cache that can be kept for offline reading.
+
+## 10. UI building blocks: Base UI, wrapped
+
+**Choice:** Base UI for accessible, unstyled components (dialogs, menus, tabs, sliders), always wrapped in our own components with our design on top.
+
+**Alternatives:** Radix UI (popular; updates have slowed); React Aria (best accessibility and touch handling; heavier, more code).
+
+**Why:** made by the Radix team, actively developed, accessibility built in. Wrapping means it can be swapped without touching screens.
+
+## 11. Animation: Motion + plain CSS
+
+**Choice:** Motion for springs, bounce, drag and swipe; plain CSS for simple effects (hover, fades, the touch glow with a pointer listener). Users can turn animations off.
+
+**Alternatives:** GSAP (great for scripted timelines, less natural for app gestures); CSS only (no real springs or interruptible gestures).
+
+**Why:** real spring physics, animations that can be interrupted and follow a finger, smooth layout changes, and it loads in small pieces.
+
+## 12. Features as extensions
+
+**Choice:** each feature lives in its own folder under `extensions/` with its manifest, web part, API part and migrations. Extensions import only `extension-sdk`, `contracts` and `ui`, never apps or other extensions. The host knows them only through their manifests.
+
+**Why:** features can be added or removed without touching the rest; users load only what they install.
+
+## 13. Code quality: oxlint + Prettier
+
+**Choice:** oxlint (type-aware) for linting; Prettier (3-space indentation) for formatting.
+
+**Alternatives:** ESLint (standard, slower, many dependencies); oxfmt (fast, not yet 1.0).
+
+**Why:** oxlint is much faster with React and accessibility rules built in, and its type-aware mode catches misused promises. Prettier is stable and widely supported.
+
+## Consequences
+
+- Two deploys (web to a CDN, API to a server) and a paid server once we launch; free while developing locally.
+- Web and API deploy separately, so contract changes stay backward compatible for a while (new fields start optional).
+- Login cookies and CORS need care across hosts (solved at the deploy step).
+- Most tools are new to the team (monorepo, pnpm, Turborepo, Fastify, PostgreSQL, Drizzle, React Router, prerendering, extensions). Each is introduced when first needed, with a plain explanation.
+- Most choices sit behind our own wrappers (UI components, repositories, providers), so they can be swapped. The database and the repo shape are the costly ones to change later.
