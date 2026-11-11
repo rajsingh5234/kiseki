@@ -32,6 +32,10 @@ Almost every screen is behind a login. Only a few public pages (home, features, 
 | Animation | Motion + plain CSS |
 | Features | Extensions, each in its own folder |
 | Code quality | oxlint + Prettier |
+| Backend shape | One modular API (a modular monolith), not microservices |
+| Background jobs | A worker process inside `apps/api`, for now |
+| Extension future | Built so outside developers can add extensions later, like VS Code |
+| How web and API talk | REST + shared Zod contracts |
 
 ## 1. App shape: monorepo with a static web app and an always-on API
 
@@ -164,6 +168,47 @@ Each layer depends on the interfaces of the layer below it (Dependency Inversion
 **Alternatives:** ESLint (standard, slower, many dependencies); oxfmt (fast, not yet 1.0).
 
 **Why:** oxlint is much faster with React and accessibility rules built in, and its type-aware mode catches misused promises. Prettier is stable and widely supported.
+
+## 14. Backend shape: a modular monolith, not microservices
+
+**Choice:** one API made of separate modules. Each module owns its own tables; only it reads or writes them. Modules talk to each other only through their public `index.ts` (like asking at a shop counter) or through events (like posting on a notice board, so the sender doesn't know who listens). Lint rules enforce this.
+
+**Alternatives:** microservices (many small servers, each deployed separately, often with its own database).
+
+**Why:** microservices pay off with many teams and huge scale. For us they would mean more deploys and servers, network calls that can fail midway, data spread across databases (no single transaction) and harder debugging. A modular monolith gives the same clean separation by rules instead of by network. Any module (for example, video processing later) can be moved out into its own service, because nothing else reaches into it: callers keep using the same functions, which then go over the network.
+
+## 15. Background jobs: a worker inside `apps/api`, for now
+
+**Choice:** the API has two entry points from the same code: `server.ts` (answers the app) and `worker.ts` (reminders, event delivery, clean-ups, later heavy processing). Both use the same modules.
+
+**Alternatives:** a separate `apps/worker` from the start (its own package and deploy; the shared modules would first have to move into a package, because apps never import each other).
+
+**Why:** simplest now, with no extra packages. A slow job never slows the API, and a worker crash doesn't stop the app. We move to `apps/worker` when there's a real reason: the worker needs its own libraries (such as video processing) or its own server and scaling.
+
+## 16. Extensions: built so outside developers can add them later
+
+**Choice:** outside developers will be able to build extensions in the future, as with VS Code. So from the start:
+
+- our own extensions use only the official extension API (no shortcuts into app internals), the same API outside developers will get;
+- the extension API has a version number, and each manifest says which version it needs;
+- each extension declares its permissions in its manifest (for example "reads study sessions", "adds a home-screen widget"), and users approve them;
+- an extension sees only its own data, plus what its permissions allow.
+
+When outside extensions arrive, we add the safety layer: their code runs in a sandbox, loaded at runtime (microfrontend-style), with a review process and a place to browse and install them.
+
+**Alternatives:** first-party extensions only (simpler, but closes the door); microfrontends now (separately built and deployed frontend apps: heavier, duplicate libraries, harder to keep one look; they solve a many-teams problem we don't have).
+
+**Why:** building our own extensions on the public API from day one means outside ones fit in later without a rewrite.
+
+## 17. How web and API talk: REST + shared Zod contracts
+
+**Choice:** a REST API (`GET /v1/tasks`) sending JSON, with request and response shapes defined once in `packages/contracts` and used by both sides.
+
+**Alternatives:** tRPC (call server functions like local ones; TypeScript clients only); gRPC (fast binary server-to-server calls; browsers can't use it directly).
+
+**Why:** works for every client: browsers, a future native app, and outside extension developers. The shared contracts give most of tRPC's type safety.
+
+**Planned later:** tRPC only inside a future internal admin app, and gRPC only between the API and a future split-out service. Before each, we first learn it in depth in a separate side project, then record it as its own decision.
 
 ## Consequences
 
