@@ -47,7 +47,7 @@ study-planner/
 
 Feature-based on both sides: everything about one feature lives in one folder with a public `index.ts` (details in [decision 001 §22](docs/decisions/001-foundation.md)).
 
-- `apps/api/src/modules/<name>/`: layered inside: `<name>.routes|controller|service|repository|types.ts`.
+- `apps/api/src/modules/<name>/`: layered inside: `<name>.module|routes|controller|service|repository|types.ts`. `<name>.module.ts` wires the module (manual DI); `composition-root.ts` calls each module's factory.
 - `apps/web/src/`: `app/` (shell, router, providers), `features/<name>/` (`components/`, `hooks/`, `api/`), `shared/`.
 - Our own packages export TypeScript source directly (no build step).
 

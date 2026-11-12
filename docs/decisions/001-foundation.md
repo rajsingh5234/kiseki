@@ -24,7 +24,7 @@ Almost every screen is behind a login. Only a few public pages (home, features, 
 | Database | PostgreSQL + Drizzle |
 | API framework | Fastify |
 | Backend structure | Layers: route → controller → service → repository |
-| Code style | Classes, manual dependency injection, patterns only where they help |
+| Code style | Classes, manual dependency injection (one factory per module), patterns only where they help |
 | Validation | Zod, kept to contracts and validation files |
 | Web | React + React Router; public pages prerendered for SEO |
 | API data in the web app | TanStack Query |
@@ -115,12 +115,12 @@ Each layer depends on the interfaces of the layer below it (Dependency Inversion
 **Choice:**
 
 - **Classes** for anything with behaviour or dependencies (controllers, services, repositories, providers, factories, the database connection, the validator, the logger, errors). Plain `const` / `type` for pure data. Composition over inheritance. Stateless helpers are static-only classes (`HttpResponse.ok(data)`). Controller handlers are arrow-function properties, so passing `controller.list` to Fastify keeps `this`.
-- **Manual dependency injection:** every class gets its dependencies through its constructor; everything is wired in one composition root.
+- **Manual dependency injection:** every class gets its dependencies (as interfaces) through its constructor. Each module wires itself in its own `<name>.module.ts`, a factory such as `createTaskModule({ db, logger })` that builds the module's repository, service and controller and returns only its public parts (routes, service). The composition root (`composition-root.ts`) creates the shared pieces (database, logger, clock) and calls each module's factory, about one line per module, passing one module's public service to another where needed. Extensions are not listed there: the host loads them from their manifests.
 - **Patterns only where they help:** add a pattern or abstraction only when it solves a real coupling, testing, reuse or ownership problem; never for symmetry.
 
-**Alternatives:** factory functions instead of classes; a DI library (tsyringe, inversify).
+**Alternatives:** factory functions instead of classes; a DI library: tsyringe or InversifyJS (need decorators and `reflect-metadata`), Awilix (no decorators, wires by name automatically); Fastify decorators (`app.decorate`), which tie business code to Fastify.
 
-**Why:** classes keep LLD, SOLID and design patterns visible in the code. Manual DI is explicit, needs no decorators, and makes fakes easy in tests. Fewer, purposeful abstractions keep the code readable.
+**Why:** classes keep LLD, SOLID and design patterns visible in the code. Manual DI is explicit, needs no decorators, and makes fakes easy in tests. TypeScript catches a missing or wrong dependency while coding; a DI library finds it only when the app runs. Module factories keep the root small and let a module be unplugged by deleting its folder and its one line. Fewer, purposeful abstractions keep the code readable. If the wiring ever becomes a burden, Awilix can replace it, changing only the wiring files.
 
 ## 7. Validation: Zod, kept at the edges
 
@@ -290,9 +290,10 @@ API (feature-based outside, layered inside):
 ```
 apps/api/src/
 ├── server.ts, worker.ts
+├── composition-root.ts   creates shared pieces, calls each module's factory
 ├── core/         errors, http, database, validator
 └── modules/
-    └── auth/     auth.routes.ts, auth.controller.ts, auth.service.ts, auth.repository.ts, index.ts
+    └── auth/     auth.module.ts, auth.routes.ts, auth.controller.ts, auth.service.ts, auth.repository.ts, index.ts
 ```
 
 Rules for both:
