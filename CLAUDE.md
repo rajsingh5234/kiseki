@@ -24,7 +24,7 @@ A study planner **product** for many users (UPSC first, more tracks later), buil
 
 - Foundation decided: [docs/decisions/001-foundation.md](docs/decisions/001-foundation.md) (stack, architecture and the reasons).
 - Now: setting up the monorepo base, one file at a time.
-- Next: plan Phase 1 (goal, features, build order, non-goals) in `docs/product/`. **No feature code until that plan is agreed.**
+- Next: plan Phase 1 (goal, features, build order, non-goals) in [docs/product/phase-1.md](docs/product/phase-1.md). Phase 1 includes the foundation (no separate Phase 0), including in detail what must be built now so future features are easy to add. **No feature code until that plan is agreed.**
 
 ## Folder structure (target)
 
