@@ -39,12 +39,17 @@ study-planner/
 │   ├── contracts/      Zod schemas + types shared by web and api
 │   ├── config/         env validation, shared constants
 │   ├── ui/             design system: tokens, themes, wrapped Base UI components, motion, effects
-│   └── extension-sdk/  extension manifest types, contribution points, host API
+│   ├── extension-sdk/  extension manifest types, contribution points, host API
+│   └── typescript-config/, vitest-config/   shared settings every app and package extends
 ├── extensions/         one folder per feature (manifest, web/, api/, migrations/)
 └── docs/               decisions/, product/, architecture and operations notes
 ```
 
-Inside `apps/api`, each module is feature-based outside and layered inside: `<name>.routes|controller|service|repository|types.ts`, with a public `index.ts`.
+Feature-based on both sides: everything about one feature lives in one folder with a public `index.ts` (details in [decision 001 §22](docs/decisions/001-foundation.md)).
+
+- `apps/api/src/modules/<name>/`: layered inside: `<name>.routes|controller|service|repository|types.ts`.
+- `apps/web/src/`: `app/` (shell, router, providers), `features/<name>/` (`components/`, `hooks/`, `api/`), `shared/`.
+- Our own packages export TypeScript source directly (no build step).
 
 **Dependency rules**
 
@@ -61,6 +66,8 @@ Inside `apps/api`, each module is feature-based outside and layered inside: `<na
 - Pure data shapes (DTOs, entities, `FieldError`): `type` with no prefix.
 - Classes and types: PascalCase.
 - Indentation: 3 spaces (Prettier enforces it).
+- Tests sit next to the code they test: `task.service.test.ts` beside `task.service.ts`.
+- Commit messages are conventional: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` (e.g. `feat: add timetable`).
 
 ## Frontend conventions
 
@@ -68,6 +75,7 @@ Inside `apps/api`, each module is feature-based outside and layered inside: `<na
 - No `Math.random()`/`Date.now()` during render. Use a seeded random for decoration and an injectable clock for time.
 - Phone-first: test 360×640 up to 390×844. Tappable things are at least 48px with 8px spacing.
 - Animation targets use `data-*` attributes, never styling classes. Respect reduced motion.
+- Styling: Tailwind CSS inside `packages/ui` components; colours, spacing, radius and motion come from CSS variables (design tokens), never hard-coded values. Themes are token sets under `[data-theme]`. Effects (glass, glow, spring…) are modules in the effects registry; components ask for the active effect, never a specific one. Plain CSS only where Tailwind can't express it, next to its component.
 
 ## Deploying
 

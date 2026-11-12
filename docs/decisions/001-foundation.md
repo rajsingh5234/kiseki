@@ -37,6 +37,11 @@ Almost every screen is behind a login. Only a few public pages (home, features, 
 | Extension future | Built so outside developers can add extensions later, like VS Code |
 | How web and API talk | REST + shared Zod contracts |
 | Testing | Vitest (unit + API flows) + Playwright (browser journeys), coverage rules in CI |
+| Shared settings | Config packages (`typescript-config`, shared Vitest config); internal packages export TypeScript source |
+| Checks | A CI "quality gates" workflow from the first app |
+| Commits | Conventional commit messages (`feat:`, `fix:`, `docs:`…) |
+| Folders | Feature-based outside on both web and API; tests next to the code; kebab-case file names |
+| Styling | Tailwind CSS v4 + CSS variables as design tokens; themes and effects via a registry |
 
 ## 1. App shape: monorepo with a static web app and an always-on API
 
@@ -234,6 +239,88 @@ When outside extensions arrive, we add the safety layer: their code runs in a sa
 **Alternatives:** Jest (older, slower with TypeScript and modern modules); Node's built-in test runner (no extra tool, but fewer features and no shared setup with the web app).
 
 **Why:** Vitest is fast, built for TypeScript, and one tool for both the web app and the API. Playwright is the standard for real-browser tests. Testing user journeys against a real database catches the bugs users would actually hit.
+
+## 19. Shared settings: config packages, and source-only internal packages
+
+**Choice:**
+
+- Settings are written once, in small packages that every app and package extends: `packages/typescript-config` (`base.json`, plus presets for the React app, React libraries and Node) and a shared Vitest config. Each app declares them as dependencies.
+- Our own packages (`contracts`, `ui`…) export their TypeScript source directly (`"exports": "./src/index.ts"`), with no build step; the app that uses them compiles them.
+
+**Alternatives:** a single root `tsconfig.base.json` (fine at first, less explicit about who uses what); building each package before use (slower, more setup, only needed for packages published outside the repo).
+
+**Why:** one place to change a setting, no copies drifting apart, and a change in a package shows up in every app instantly.
+
+## 20. CI quality gates from the first app
+
+**Choice:** one reusable GitHub Actions workflow runs the checks (type check, lint, tests with coverage, build). Pull requests run it, and an outdated run is cancelled when new commits arrive. Releases run it again, build once and deploy that same build. Turborepo runs only the packages affected by a change.
+
+**Alternatives:** checks only in local git hooks (can be skipped); adding CI later (more to fix at once).
+
+**Why:** bad code can't slip in even when someone forgets to run the checks. Set up early, it's small and protects everything from day one.
+
+## 21. Conventional commit messages
+
+**Choice:** each commit message starts with its type: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` (for example `feat: add timetable`). Automatic version numbers and a changelog from these messages (semantic-release or similar) come when we start releasing.
+
+**Why:** a history that is easy to scan, and automatic versioning later, which the versioned extension API will also need.
+
+## 22. Folder structure: feature-based on both web and API
+
+**Choice:** everything about one feature lives in one folder with a public `index.ts`; other folders import only that.
+
+Web app (most features live in `extensions/`, shared UI in `packages/ui`, so the app stays thin):
+
+```
+apps/web/src/
+├── main.tsx      entry point
+├── app/          app shell: router, providers (TanStack Query, theme), layout
+├── features/     core features that aren't extensions (auth, onboarding, settings…)
+│   └── auth/     components/, hooks/, api/ (API calls + TanStack Query hooks), index.ts
+└── shared/       small helpers used across the web app only
+```
+
+API (feature-based outside, layered inside):
+
+```
+apps/api/src/
+├── server.ts, worker.ts
+├── core/         errors, http, database, validator
+└── modules/
+    └── auth/     auth.routes.ts, auth.controller.ts, auth.service.ts, auth.repository.ts, index.ts
+```
+
+Rules for both:
+
+- tests sit next to the code they test (`auth.service.test.ts` beside `auth.service.ts`);
+- file names are kebab-case (`login-form.tsx`), never PascalCase: macOS ignores letter case but Linux servers don't, so a renamed file can work locally and break on the server.
+
+**Alternatives:** folders by file type (`components/`, `services/`, `repositories/` at the top level), which scatters one feature across the whole app; tests in a separate `test/` folder, where they get forgotten.
+
+**Why:** a feature can be found, changed, moved into an extension or removed in one place.
+
+## 23. Styling: Tailwind CSS + CSS variables, with themes and an effects registry
+
+**Choice:**
+
+- **Tailwind CSS v4** for component styling, used inside `packages/ui` components (with a small helper for typed variants such as `size="sm"`), so screens and extensions use components rather than long class lists. Prettier sorts the classes (`prettier-plugin-tailwindcss`).
+- **CSS variables as design tokens** (colours, spacing, radius, motion). A theme is one set of values:
+
+  ```css
+  [data-theme="ocean"] { --color-accent: #3154c8; --color-surface: #fbfdff; }
+  ```
+
+  Switching theme changes one attribute on the page; adding a theme adds one block. A test checks that every theme defines every token. Only the active theme's CSS is loaded at start.
+- **An effects registry** (Strategy + Registry). Each effect is one module that declares its id, name, kind (visual or motion), settings (on/off, intensity) and a fallback for reduced motion or weak phones:
+  - visual effects (glass, glow, depth) bring a small CSS file, switched on with `data-effects="…"`;
+  - motion effects (spring, bounce) return a Motion preset.
+
+  Adding an effect means one new file and one line in the list. Settings shows it automatically, and components ask for "the active effect", never for a specific one.
+- **Plain CSS** only for what Tailwind can't express well (complex keyframes, the pointer glow), kept next to the component that needs it.
+
+**Alternatives:** CSS Modules (plain scoped CSS; more files, consistency left to discipline); CSS-in-JS such as styled-components (runs while the page loads, so slower); zero-runtime CSS-in-TS such as vanilla-extract or Panda (type-checked theme tokens, but more setup and a smaller community).
+
+**Why:** no styling code runs in the browser and only the CSS we use is shipped; themes and effects are easy to add; the app and every extension share one look; CSS variables work with any tool an outside extension developer uses; and the team already knows Tailwind. All styling lives in `packages/ui`, so a later change of approach stays contained there.
 
 ## Consequences
 
