@@ -42,6 +42,7 @@ Almost every screen is behind a login. Only a few public pages (home, features, 
 | Commits | Conventional commit messages (`feat:`, `fix:`, `docs:`…) |
 | Folders | Feature-based outside on both web and API; tests next to the code; kebab-case file names |
 | Styling | Tailwind CSS v4 + CSS variables as design tokens; themes and effects via a registry |
+| Logging | Pino (Fastify's built-in logger) behind our own `ILogger` |
 
 ## 1. App shape: monorepo with a static web app and an always-on API
 
@@ -325,6 +326,23 @@ Rules for both:
 **Alternatives:** CSS Modules (plain scoped CSS; more files, consistency left to discipline); CSS-in-JS such as styled-components (runs while the page loads, so slower); zero-runtime CSS-in-TS such as vanilla-extract or Panda (type-checked theme tokens, but more setup and a smaller community).
 
 **Why:** no styling code runs in the browser and only the CSS we use is shipped; themes and effects are easy to add; the app and every extension share one look; CSS variables work with any tool an outside extension developer uses; and the team already knows Tailwind. All styling lives in `packages/ui`, so a later change of approach stays contained there.
+
+## 24. Logging: Pino behind our own logger interface
+
+**Choice:** the API logs with **Pino**, Fastify's built-in logger, used through our own `ILogger` interface so it can be swapped.
+
+- **Levels:** `debug` and `info` for normal events, `warn` for something odd, `error` when something failed; production hides `debug`.
+- **Structured:** each log is data, e.g. `{ "level": "info", "msg": "target created", "userId": "u_12", "requestId": "r_9f3", "ms": 14 }`, so it can be searched.
+- **A request ID on every log**, so all logs from one request can be followed together.
+- **Secrets hidden automatically:** passwords, tokens and cookies are replaced with `[REDACTED]`.
+- **Readable output in development** (pretty printing), JSON in production.
+- Logs go to the server's output; the service that collects and searches them is chosen at the deploy step.
+
+**Alternatives:** `console.log` (no levels or structure, hard to search); Winston (flexible, but slower and not built into Fastify).
+
+**Why:** the fastest Node.js logger, already part of Fastify, and structured logs make production problems quick to find.
+
+**Related, decided at the deploy step:** catching errors in users' browsers and phones (error tracking such as Sentry), which logging on the server doesn't cover.
 
 ## Consequences
 
