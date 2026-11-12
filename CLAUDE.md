@@ -65,7 +65,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Contracts that classes implement: `interface` with an `I` prefix, e.g. `ITaskRepository`.
 - Pure data shapes (DTOs, entities, `FieldError`): `type` with no prefix.
 - Classes and types: PascalCase.
-- Indentation: 3 spaces (Prettier enforces it).
+- Indentation: 3 spaces (the formatter, oxfmt, enforces it).
 - Tests sit next to the code they test: `task.service.test.ts` beside `task.service.ts`.
 - Commit messages are conventional: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` (e.g. `feat: add timetable`).
 

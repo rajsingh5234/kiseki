@@ -31,7 +31,7 @@ Almost every screen is behind a login. Only a few public pages (home, features, 
 | UI building blocks | Base UI, wrapped in our own components |
 | Animation | Motion + plain CSS |
 | Features | Extensions, each in its own folder |
-| Code quality | oxlint + Prettier |
+| Code quality | oxlint + oxfmt (Prettier as the fallback) |
 | Backend shape | One modular API (a modular monolith), not microservices |
 | Background jobs | A worker process inside `apps/api`, for now |
 | Extension future | Built so outside developers can add extensions later, like VS Code |
@@ -167,13 +167,15 @@ Each layer depends on the interfaces of the layer below it (Dependency Inversion
 
 **Why:** features can be added or removed without touching the rest; users load only what they install.
 
-## 13. Code quality: oxlint + Prettier
+## 13. Code quality: oxlint + oxfmt
 
-**Choice:** oxlint (type-aware) for linting; Prettier (3-space indentation) for formatting.
+**Choice:** oxlint (type-aware) for linting; oxfmt (3-space indentation) for formatting, with its built-in Tailwind class sorting and import sorting. It formats everything in the repo: TypeScript, JSON, YAML, CSS and Markdown. (Changed on 2026-11-12: the first choice was Prettier.)
 
-**Alternatives:** ESLint (standard, slower, many dependencies); oxfmt (fast, not yet 1.0).
+**Alternatives:** ESLint (standard, slower, many dependencies); Prettier (stable for years, the standard, Tailwind sorting through a plugin); Biome (fast, but no Tailwind class sorting like Prettier's plugin).
 
-**Why:** oxlint is much faster with React and accessibility rules built in, and its type-aware mode catches misused promises. Prettier is stable and widely supported.
+**Why:** oxlint is much faster with React and accessibility rules built in, and its type-aware mode catches misused promises. oxfmt comes from the same team, is about 30× faster than Prettier and passes all of Prettier's JavaScript/TypeScript tests, so its output matches Prettier's (it differs only where Prettier has bugs).
+
+**Risk and fallback:** oxfmt is still beta (since February 2026). If it causes problems, we switch to Prettier with `prettier-plugin-tailwindcss`: one config change and one reformat commit, since the output is nearly identical.
 
 ## 14. Backend shape: a modular monolith, not microservices
 
@@ -253,7 +255,9 @@ When outside extensions arrive, we add the safety layer: their code runs in a sa
 
 ## 20. CI quality gates from the first app
 
-**Choice:** one reusable GitHub Actions workflow runs the checks (type check, lint, tests with coverage, build). Pull requests run it, and an outdated run is cancelled when new commits arrive. Releases run it again, build once and deploy that same build. Turborepo runs only the packages affected by a change.
+**Choice:** one reusable GitHub Actions workflow runs the checks (format check, type check, lint, tests with coverage, build). Pull requests run it, and an outdated run is cancelled when new commits arrive. Releases run it again, build once and deploy that same build. Turborepo runs only the packages affected by a change.
+
+Locally, a **pre-commit hook** formats only the files being committed, so unformatted code never reaches CI (the hook tool is chosen during setup). CI stays the real gate, because hooks can be skipped.
 
 **Alternatives:** checks only in local git hooks (can be skipped); adding CI later (more to fix at once).
 
@@ -303,7 +307,7 @@ Rules for both:
 
 **Choice:**
 
-- **Tailwind CSS v4** for component styling, used inside `packages/ui` components (with a small helper for typed variants such as `size="sm"`), so screens and extensions use components rather than long class lists. Prettier sorts the classes (`prettier-plugin-tailwindcss`).
+- **Tailwind CSS v4** for component styling, used inside `packages/ui` components (with a small helper for typed variants such as `size="sm"`), so screens and extensions use components rather than long class lists. oxfmt sorts the classes (built in).
 - **CSS variables as design tokens** (colours, spacing, radius, motion). A theme is one set of values:
 
   ```css
