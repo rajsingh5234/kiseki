@@ -36,6 +36,7 @@ Almost every screen is behind a login. Only a few public pages (home, features, 
 | Background jobs | A worker process inside `apps/api`, for now |
 | Extension future | Built so outside developers can add extensions later, like VS Code |
 | How web and API talk | REST + shared Zod contracts |
+| Testing | Vitest (unit + API flows) + Playwright (browser journeys), coverage rules in CI |
 
 ## 1. App shape: monorepo with a static web app and an always-on API
 
@@ -209,6 +210,30 @@ When outside extensions arrive, we add the safety layer: their code runs in a sa
 **Why:** works for every client: browsers, a future native app, and outside extension developers. The shared contracts give most of tRPC's type safety.
 
 **Planned later:** tRPC only inside a future internal admin app, and gRPC only between the API and a future split-out service. Before each, we first learn it in depth in a separate side project, then record it as its own decision.
+
+## 18. Testing and coverage
+
+**Choice:** three kinds of tests.
+
+| Type | What it checks | Tool |
+| --- | --- | --- |
+| Unit tests | Small pure logic, fast (a monthly target splitting into weeks, streaks in the user's time zone) | Vitest |
+| API flow tests | Real requests through the real API and a real test PostgreSQL database; nothing inside the API is faked, only outside services (email, payments) | Vitest |
+| Browser journeys | What a person does in the real app (tick a task, reload, it's still ticked) | Playwright |
+
+**Coverage rules** (coverage = the share of code that runs during tests; a guide, not the goal):
+
+- pure logic (targets, streaks, syllabus changes): 90% or more;
+- API and packages overall: about 80%, checked on every pull request;
+- coverage never drops in a pull request;
+- every bug fix comes with a test that would have caught it;
+- no tests for looks (colours, layout): they break on every design change and catch no bugs;
+- browser tests find elements by role, label or visible text, never by CSS class (this also checks accessibility);
+- never bend a test to make it pass: find out whether the app or the test is wrong first.
+
+**Alternatives:** Jest (older, slower with TypeScript and modern modules); Node's built-in test runner (no extra tool, but fewer features and no shared setup with the web app).
+
+**Why:** Vitest is fast, built for TypeScript, and one tool for both the web app and the API. Playwright is the standard for real-browser tests. Testing user journeys against a real database catches the bugs users would actually hit.
 
 ## Consequences
 
