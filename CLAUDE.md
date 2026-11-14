@@ -7,10 +7,10 @@ A study planner **product** for many users (UPSC first, more tracks later), buil
 1. **Discuss before coding.** For each feature, list the possible approaches with their pros and cons. Recommend the best one, with its time and space complexity.
 2. **Discuss tech choices.** Agree on libraries, packages and stack changes before adding them. Give the trade-offs.
 3. **Step by step.** Never implement a whole feature at once.
-4. **One file at a time.** Write one file, explain what it does and why, and wait for review before moving to the next.
+4. **One file at a time.** Write one file, explain what it does and why (teaching any new idea in it), and wait for review. Move to the next step only when the user has completely understood the current one.
 5. **Quality bar:** best practices, LLD, SOLID principles, suitable design patterns and a clean folder structure.
 6. **Plug-and-unplug modularity.** Depend on abstractions (interfaces), inject dependencies and keep modules loosely coupled. A module should be swappable or removable without changes elsewhere. Add an abstraction only when it solves a real coupling, testing, reuse or ownership problem, never just for symmetry.
-7. **Proactive suggestions.** Raise improvements, better alternatives, and best tools and practices the user may not know yet. Bring each one up **when it becomes relevant** (at the step that needs it), one topic at a time, never as a big list up front; discuss and decide it before adding it.
+7. **Proactive suggestions.** Raise improvements, better alternatives, and best tools and practices the user may not know yet, **without waiting to be asked**. Bring each one up **when it becomes relevant** (at the step that needs it), one topic at a time, never as a big list up front, with a recommended best approach. Then discuss the approaches in detail and decide together before adding it.
 8. **Model and effort reminders.** At the start of each task, and whenever the kind of work changes, start the reply with one line recommending the model and effort, e.g. `Suggested: Opus 5.5 · high`, plus a few words on why. If the current setting already fits, say so in that line. Guide:
    - **Opus 5.5 · high**: architecture, planning, vision and roadmap discussions, design reviews, migrations and refactors across many files.
    - **Opus 5.5 · extra high**: decisions that are hard to undo (data model, core architecture), or a bug that resisted a first attempt.
