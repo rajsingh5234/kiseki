@@ -49,3 +49,13 @@ Extensions get shared abilities only through the host API, each behind a permiss
 #### Adding a new kind of slot
 
 If a future extension needs a place that doesn't exist yet (e.g. a button inside the timetable), we add that slot once to the host and `extension-sdk`. Every later extension can then use it.
+
+### Installable themes
+
+**Goal:** in the future, users can install themes (ours, later outside ones) and use them, like VS Code themes. So from the start:
+
+- **A theme is a kind of extension:** its manifest contributes to a `themes` slot. Our built-in themes use the same path, with no special case.
+- **A theme is data, not code:** a token set (colours, radius, shadows, motion…) in a file, checked against a schema before use. A theme that only holds data can't break the app or read user data, so outside themes are safe.
+- **Missing tokens fall back** to the default theme, so an older theme keeps working when we add new tokens.
+- **Contrast check:** a theme must pass text-contrast rules to be accepted.
+- **Installed themes** appear in the user's theme settings; uninstalling one switches the user back to the default.
