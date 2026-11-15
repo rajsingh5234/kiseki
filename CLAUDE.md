@@ -73,7 +73,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 
 - Function components and custom hooks, with pure functions for logic (`lib/`). Hooks hold behaviour; components only render.
 - No `Math.random()`/`Date.now()` during render. Use a seeded random for decoration and an injectable clock for time.
-- Phone-first: test 360×640 up to 390×844. Tappable things are at least 48px with 8px spacing.
+- Every screen size, designed phone-first: small phone (360×640), phone (390×844 to 430×932), tablet (768, portrait and landscape), laptop (1280) and desktop (1440 and wider). Layouts adapt, e.g. bottom nav on phones → side rail on tablets → full sidebar on desktop. Designs and tests cover each size. Tappable things are at least 48px with 8px spacing.
 - Animation targets use `data-*` attributes, never styling classes. Respect reduced motion.
 - Styling: Tailwind CSS inside `packages/ui` components; colours, spacing, radius and motion come from CSS variables (design tokens), never hard-coded values. Themes are token sets under `[data-theme]`. Effects (glass, glow, spring…) are modules in the effects registry; components ask for the active effect, never a specific one. Plain CSS only where Tailwind can't express it, next to its component.
 
