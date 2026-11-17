@@ -37,7 +37,7 @@ kiseki/
 │   └── api/            Fastify server + worker entry point
 ├── packages/
 │   ├── contracts/      Zod schemas + types shared by web and api
-│   ├── config/         env validation, shared constants
+│   ├── config/         shared constants, once a second app needs them (API env config lives in apps/api)
 │   ├── ui/             design system: tokens, themes, wrapped Base UI components, motion, effects
 │   ├── extension-sdk/  extension manifest types, contribution points, host API
 │   └── typescript-config/, vitest-config/   shared settings every app and package extends
@@ -47,6 +47,7 @@ kiseki/
 
 Feature-based on both sides: everything about one feature lives in one folder with a public `index.ts` (details in [decision 001 §22](docs/decisions/001-foundation.md)).
 
+- `apps/api/src/core/`: shared building blocks, e.g. `config/` (env validation: the only code that knows the env shape) and `logger/`.
 - `apps/api/src/modules/<name>/`: layered inside: `<name>.module|routes|controller|service|repository|types.ts`. `<name>.module.ts` wires the module (manual DI); `composition-root.ts` calls each module's factory.
 - `apps/web/src/`: `app/` (shell, router, providers), `features/<name>/` (`components/`, `hooks/`, `api/`), `shared/`.
 - Our own packages export TypeScript source directly (no build step) and use the `@kiseki/` scope, e.g. `@kiseki/ui`.
@@ -58,6 +59,16 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - API layers: route → controller → service → repository → database. Controllers never touch repositories; services own business rules and transactions; repositories only read and write their own module's tables.
 - Modules talk to each other only through their public `index.ts` (or events); never through another module's repository or tables.
 - Web and API share request/response types only through `packages/contracts`.
+- Only the entry point reads `process.env`; it passes it to `loadConfig()` once, and everything else receives the validated, frozen `config` ([decision 007](docs/decisions/007-api-foundation.md)).
+- Zod appears only in `packages/contracts`, `*.validation.ts` files and `core/config/` ([decision 001 §7](docs/decisions/001-foundation.md)).
+
+**Imports**
+
+- Same folder: `./sibling.ts`, e.g. a test importing the code it tests.
+- Another area of the same app: subpath imports with `#`, e.g. `#core/config/app-config.ts` (`"imports": { "#*": "./src/*" }` in the app's `package.json`). Never `@/` aliases: Node runs our `.ts` directly and doesn't read tsconfig `paths`.
+- Another package: `@kiseki/<name>`, e.g. `@kiseki/vitest-config/base`.
+- `../` is banned (lint: `import/no-relative-parent-imports`).
+- Relative imports include the `.ts` extension, as Node requires.
 
 **Naming**
 
@@ -67,6 +78,8 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Classes and types: PascalCase.
 - Indentation: 3 spaces (the formatter, oxfmt, enforces it).
 - Tests sit next to the code they test: `task.service.test.ts` beside `task.service.ts`.
+- Each test file groups its tests into `describe("happy path")` (valid input, success) and `describe("sad path")` (bad input, errors). Import `describe`/`it`/`expect` from `vitest` explicitly (no globals).
+- TypeScript is erasable-only: no `enum` (use `as const` objects), no constructor parameter properties (declare fields and assign them) ([decision 005](docs/decisions/005-typescript.md)).
 - Commit messages are conventional: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` (e.g. `feat: add timetable`).
 
 ## Frontend conventions
@@ -86,7 +99,11 @@ Not deployed yet. Hosting for the web app, the API and the database is decided a
 Use Node 26 and pnpm 12 ([decision 003](docs/decisions/003-tool-versions.md)). Commands are added here as the monorepo is set up.
 
 - `pnpm install`: install everything and set up the git hook (Lefthook formats and lints staged files on every commit).
-- `pnpm build` / `pnpm dev` / `pnpm typecheck` / `pnpm test`: run that task in every package through Turborepo.
+- `pnpm build` / `pnpm dev` / `pnpm typecheck` / `pnpm test`: run that task in every package through Turborepo. `pnpm test` enforces 80% coverage; `pnpm test:watch` re-runs tests on save.
 - `pnpm lint`: oxlint with type-aware rules ([decision 006](docs/decisions/006-code-quality-tooling.md)).
 - `pnpm format` / `pnpm format:check`: format with oxfmt, or only check (CI).
-- Add tools with `pnpm add -D -w --save-exact <name>`, then check the result against [decision 004](docs/decisions/004-supply-chain-security.md).
+- Adding a dependency (always exact versions; check the result against [decision 004](docs/decisions/004-supply-chain-security.md)):
+  - root-only tool: `pnpm add -D -w --save-exact <name>`;
+  - used by one package: `pnpm --filter <package> add --save-exact <name>`;
+  - used by two or more packages: put its version in the `catalog:` of `pnpm-workspace.yaml` (`--save-catalog --save-exact`) and reference it as `"catalog:"`.
+- Local env: copy `apps/api/.env.example` to `apps/api/.env` (never committed); blank values mean "use the default".

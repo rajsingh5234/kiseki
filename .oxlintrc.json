@@ -6,6 +6,9 @@
       "suspicious": "error",
       "perf": "warn"
    },
+   "rules": {
+      "import/no-relative-parent-imports": "error"
+   },
    "options": {
       "typeAware": true
    }
