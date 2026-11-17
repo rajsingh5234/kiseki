@@ -19,3 +19,8 @@ coverage/
 
 # OS clutter
 .DS_Store
+
+# Editor: share only the team settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
