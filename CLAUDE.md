@@ -79,7 +79,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 
 ## Deploying
 
-Not deployed yet. Hosting for the web app, the API and the database is decided at the deploy step. **Never link this folder to the `birthday` Vercel project** (Raj's separate birthday site): deploying from here would replace it.
+Not deployed yet. Hosting for the web app, the API and the database is decided at the deploy step. **Never link this folder to the `birthday` Vercel project** (a separate personal project): deploying from here would replace it.
 
 ## Commands
 
