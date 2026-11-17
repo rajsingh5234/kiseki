@@ -1,0 +1,11 @@
+pre-commit:
+   piped: true
+   jobs:
+      - name: format
+        glob: "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,yaml,yml,md,css,html,toml}"
+        run: pnpm oxfmt --no-error-on-unmatched-pattern {staged_files}
+        stage_fixed: true
+
+      - name: lint
+        glob: "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
+        run: pnpm oxlint --deny-warnings --no-error-on-unmatched-pattern {staged_files}

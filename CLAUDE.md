@@ -84,3 +84,9 @@ Not deployed yet. Hosting for the web app, the API and the database is decided a
 ## Commands
 
 Use Node 26 and pnpm 12 ([decision 003](docs/decisions/003-tool-versions.md)). Commands are added here as the monorepo is set up.
+
+- `pnpm install`: install everything and set up the git hook (Lefthook formats and lints staged files on every commit).
+- `pnpm build` / `pnpm dev` / `pnpm typecheck` / `pnpm test`: run that task in every package through Turborepo.
+- `pnpm lint`: oxlint with type-aware rules ([decision 006](docs/decisions/006-code-quality-tooling.md)).
+- `pnpm format` / `pnpm format:check`: format with oxfmt, or only check (CI).
+- Add tools with `pnpm add -D -w --save-exact <name>`, then check the result against [decision 004](docs/decisions/004-supply-chain-security.md).

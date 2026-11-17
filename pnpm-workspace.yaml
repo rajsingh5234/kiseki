@@ -5,3 +5,6 @@ packages:
 
 engineStrict: true
 trustPolicy: no-downgrade
+
+allowBuilds:
+   lefthook: false
