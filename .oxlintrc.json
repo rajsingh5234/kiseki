@@ -9,6 +9,25 @@
    "rules": {
       "import/no-relative-parent-imports": "error"
    },
+   "overrides": [
+      {
+         "files": ["**/*.ts"],
+         "excludeFiles": ["**/*.test.ts", "**/*.fixture.ts"],
+         "rules": {
+            "no-restricted-imports": [
+               "error",
+               {
+                  "patterns": [
+                     {
+                        "group": ["**/*.fixture.ts"],
+                        "message": "Fixtures are test-only: import them only from *.test.ts files."
+                     }
+                  ]
+               }
+            ]
+         }
+      }
+   ],
    "options": {
       "typeAware": true
    }

@@ -3,13 +3,10 @@ import { Writable } from "node:stream";
 import Fastify from "fastify";
 import { describe, expect, it } from "vitest";
 
+import { testConfig } from "#core/config/app-config.fixture.ts";
 import type { AppConfig } from "#core/config/app-config.ts";
 
 import { loggerOptions } from "./logger-options.ts";
-
-function configFor(env: AppConfig["env"], logLevel?: AppConfig["logLevel"]): AppConfig {
-   return { env, port: 3000, host: "127.0.0.1", logLevel };
-}
 
 function levelFor(config: AppConfig): unknown {
    const options = loggerOptions(config);
@@ -36,16 +33,16 @@ describe("loggerOptions", () => {
          ["test", "silent"],
          ["production", "info"],
       ] as const)("uses level %s → %s by default", (env, level) => {
-         expect(levelFor(configFor(env))).toBe(level);
+         expect(levelFor(testConfig({ env }))).toBe(level);
       });
 
       it("lets LOG_LEVEL override the default", () => {
-         expect(levelFor(configFor("production", "debug"))).toBe("debug");
-         expect(levelFor(configFor("test", "warn"))).toBe("warn");
+         expect(levelFor(testConfig({ env: "production", logLevel: "debug" }))).toBe("debug");
+         expect(levelFor(testConfig({ env: "test", logLevel: "warn" }))).toBe("warn");
       });
 
       it("writes ordinary fields unchanged", () => {
-         const { lines, app } = captureLogs(configFor("development"));
+         const { lines, app } = captureLogs(testConfig({ env: "development" }));
 
          app.log.info({ userId: "u_12" }, "target created");
 
@@ -55,7 +52,7 @@ describe("loggerOptions", () => {
 
    describe("sad path", () => {
       it("never writes secrets to the log", () => {
-         const { lines, app } = captureLogs(configFor("development"));
+         const { lines, app } = captureLogs(testConfig({ env: "development" }));
 
          app.log.info(
             {
