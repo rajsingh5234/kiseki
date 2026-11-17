@@ -2,17 +2,20 @@
    "name": "kiseki",
    "private": true,
    "type": "module",
-   "packageManager": "pnpm@12.21.0",
-   "engines": {
-      "node": ">=26.13.1 <27"
-   },
    "scripts": {
       "build": "turbo run build",
       "dev": "turbo run dev",
       "typecheck": "turbo run typecheck",
-      "test": "turbo run test"
+      "test": "turbo run test",
+      "format": "oxfmt",
+      "format:check": "oxfmt --check"
    },
    "devDependencies": {
+      "oxfmt": "0.78.0",
       "turbo": "2.11.11"
-   }
+   },
+   "engines": {
+      "node": ">=26.13.1 <27"
+   },
+   "packageManager": "pnpm@12.21.0"
 }

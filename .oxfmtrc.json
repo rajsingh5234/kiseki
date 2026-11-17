@@ -1,0 +1,12 @@
+{
+   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+   "tabWidth": 3,
+   "sortImports": true,
+   "ignorePatterns": ["pnpm-lock.yaml"],
+   "overrides": [
+      {
+         "files": ["*.md"],
+         "options": { "tabWidth": 2 }
+      }
+   ]
+}
