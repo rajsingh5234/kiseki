@@ -1,0 +1,20 @@
+{
+   "$schema": "https://json.schemastore.org/tsconfig",
+   "compilerOptions": {
+      "target": "es2025",
+      "lib": ["es2025"],
+
+      "strict": true,
+      "noUncheckedIndexedAccess": true,
+      "noImplicitOverride": true,
+
+      "verbatimModuleSyntax": true,
+      "isolatedModules": true,
+      "erasableSyntaxOnly": true,
+      "moduleDetection": "force",
+      "allowImportingTsExtensions": true,
+
+      "noEmit": true,
+      "skipLibCheck": true
+   }
+}
