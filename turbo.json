@@ -12,6 +12,10 @@
          "dependsOn": ["^transit"],
          "outputs": ["coverage/**"]
       },
+      "test:watch": {
+         "persistent": true,
+         "cache": false
+      },
       "transit": {
          "dependsOn": ["^transit"]
       },

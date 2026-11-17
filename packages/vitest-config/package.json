@@ -1,0 +1,22 @@
+{
+   "name": "@kiseki/vitest-config",
+   "version": "0.0.0",
+   "private": true,
+   "type": "module",
+   "exports": {
+      "./base": "./base.ts"
+   },
+   "scripts": {
+      "typecheck": "tsc"
+   },
+   "devDependencies": {
+      "@kiseki/typescript-config": "workspace:*",
+      "@types/node": "catalog:",
+      "typescript": "catalog:",
+      "vite": "catalog:",
+      "vitest": "catalog:"
+   },
+   "peerDependencies": {
+      "vitest": "catalog:"
+   }
+}
