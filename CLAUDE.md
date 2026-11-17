@@ -1,6 +1,6 @@
-# Study Planner
+# Kiseki
 
-A study planner **product** for many users (UPSC first, more tracks later), built collaboratively. Everything should be world class: fast, accessible, modular and well tested. It is also a learning journey: new tools are introduced one at a time, when first needed, with a plain explanation.
+**Kiseki** (Japanese 軌跡, "trajectory"; see [decision 002](docs/decisions/002-product-name.md)) is a study planner **product** for many users (UPSC first, more tracks later), built collaboratively. Everything should be world class: fast, accessible, modular and well tested. It is also a learning journey: new tools are introduced one at a time, when first needed, with a plain explanation.
 
 ## How we work (applies to every feature, however small)
 
@@ -31,7 +31,7 @@ A study planner **product** for many users (UPSC first, more tracks later), buil
 Create folders only when there is a real file to put in them.
 
 ```
-study-planner/
+kiseki/
 ├── apps/
 │   ├── web/            React app → static files on a CDN (public pages prerendered)
 │   └── api/            Fastify server + worker entry point
@@ -49,7 +49,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 
 - `apps/api/src/modules/<name>/`: layered inside: `<name>.module|routes|controller|service|repository|types.ts`. `<name>.module.ts` wires the module (manual DI); `composition-root.ts` calls each module's factory.
 - `apps/web/src/`: `app/` (shell, router, providers), `features/<name>/` (`components/`, `hooks/`, `api/`), `shared/`.
-- Our own packages export TypeScript source directly (no build step).
+- Our own packages export TypeScript source directly (no build step) and use the `@kiseki/` scope, e.g. `@kiseki/ui`.
 
 **Dependency rules**
 
