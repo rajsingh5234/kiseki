@@ -83,4 +83,4 @@ Not deployed yet. Hosting for the web app, the API and the database is decided a
 
 ## Commands
 
-Use Node 24. Commands are added here as the monorepo is set up.
+Use Node 26 and pnpm 12 ([decision 003](docs/decisions/003-tool-versions.md)). Commands are added here as the monorepo is set up.
