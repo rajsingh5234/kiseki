@@ -17,32 +17,32 @@ Almost every screen is behind a login. Only a few public pages (home, features, 
 
 ## Summary
 
-| Area | Choice |
-| --- | --- |
-| App shape | Monorepo: static web app + always-on API |
-| Monorepo tools | pnpm + Turborepo |
-| Database | PostgreSQL + Drizzle |
-| API framework | Fastify |
-| Backend structure | Layers: route → controller → service → repository |
-| Code style | Classes, manual dependency injection (one factory per module), patterns only where they help |
-| Validation | Zod, kept to contracts and validation files |
-| Web | React + React Router; public pages prerendered for SEO |
-| API data in the web app | TanStack Query |
-| UI building blocks | Base UI, wrapped in our own components |
-| Animation | Motion + plain CSS |
-| Features | Extensions, each in its own folder |
-| Code quality | oxlint + oxfmt (Prettier as the fallback) |
-| Backend shape | One modular API (a modular monolith), not microservices |
-| Background jobs | A worker process inside `apps/api`, for now |
-| Extension future | Built so outside developers can add extensions later, like VS Code |
-| How web and API talk | REST + shared Zod contracts |
-| Testing | Vitest (unit + API flows) + Playwright (browser journeys), coverage rules in CI |
-| Shared settings | Config packages (`typescript-config`, shared Vitest config); internal packages export TypeScript source |
-| Checks | A CI "quality gates" workflow from the first app |
-| Commits | Conventional commit messages (`feat:`, `fix:`, `docs:`…) |
-| Folders | Feature-based outside on both web and API; tests next to the code; kebab-case file names |
-| Styling | Tailwind CSS v4 + CSS variables as design tokens; themes and effects via a registry |
-| Logging | Pino (Fastify's built-in logger) behind our own `ILogger` |
+| Area                    | Choice                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| App shape               | Monorepo: static web app + always-on API                                                                |
+| Monorepo tools          | pnpm + Turborepo                                                                                        |
+| Database                | PostgreSQL + Drizzle                                                                                    |
+| API framework           | Fastify                                                                                                 |
+| Backend structure       | Layers: route → controller → service → repository                                                       |
+| Code style              | Classes, manual dependency injection (one factory per module), patterns only where they help            |
+| Validation              | Zod, kept to contracts and validation files                                                             |
+| Web                     | React + React Router; public pages prerendered for SEO                                                  |
+| API data in the web app | TanStack Query                                                                                          |
+| UI building blocks      | Base UI, wrapped in our own components                                                                  |
+| Animation               | Motion + plain CSS                                                                                      |
+| Features                | Extensions, each in its own folder                                                                      |
+| Code quality            | oxlint + oxfmt (Prettier as the fallback)                                                               |
+| Backend shape           | One modular API (a modular monolith), not microservices                                                 |
+| Background jobs         | A worker process inside `apps/api`, for now                                                             |
+| Extension future        | Built so outside developers can add extensions later, like VS Code                                      |
+| How web and API talk    | REST + shared Zod contracts                                                                             |
+| Testing                 | Vitest (unit + API flows) + Playwright (browser journeys), coverage rules in CI                         |
+| Shared settings         | Config packages (`typescript-config`, shared Vitest config); internal packages export TypeScript source |
+| Checks                  | A CI "quality gates" workflow from the first app                                                        |
+| Commits                 | Conventional commit messages (`feat:`, `fix:`, `docs:`…)                                                |
+| Folders                 | Feature-based outside on both web and API; tests next to the code; kebab-case file names                |
+| Styling                 | Tailwind CSS v4 + CSS variables as design tokens; themes and effects via a registry                     |
+| Logging                 | Pino (Fastify's built-in logger) behind our own `ILogger`                                               |
 
 ## 1. App shape: monorepo with a static web app and an always-on API
 
@@ -223,11 +223,11 @@ When outside extensions arrive, we add the safety layer: their code runs in a sa
 
 **Choice:** three kinds of tests.
 
-| Type | What it checks | Tool |
-| --- | --- | --- |
-| Unit tests | Small pure logic, fast (a monthly target splitting into weeks, streaks in the user's time zone) | Vitest |
-| API flow tests | Real requests through the real API and a real test PostgreSQL database; nothing inside the API is faked, only outside services (email, payments) | Vitest |
-| Browser journeys | What a person does in the real app (tick a task, reload, it's still ticked) | Playwright |
+| Type             | What it checks                                                                                                                                   | Tool       |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| Unit tests       | Small pure logic, fast (a monthly target splitting into weeks, streaks in the user's time zone)                                                  | Vitest     |
+| API flow tests   | Real requests through the real API and a real test PostgreSQL database; nothing inside the API is faked, only outside services (email, payments) | Vitest     |
+| Browser journeys | What a person does in the real app (tick a task, reload, it's still ticked)                                                                      | Playwright |
 
 **Coverage rules** (coverage = the share of code that runs during tests; a guide, not the goal):
 
@@ -313,15 +313,20 @@ Rules for both:
 - **CSS variables as design tokens** (colours, spacing, radius, motion). A theme is one set of values:
 
   ```css
-  [data-theme="ocean"] { --color-accent: #3154c8; --color-surface: #fbfdff; }
+  [data-theme="ocean"] {
+    --color-accent: #3154c8;
+    --color-surface: #fbfdff;
+  }
   ```
 
   Switching theme changes one attribute on the page; adding a theme adds one block. A test checks that every theme defines every token. Only the active theme's CSS is loaded at start.
+
 - **An effects registry** (Strategy + Registry). Each effect is one module that declares its id, name, kind (visual or motion), settings (on/off, intensity) and a fallback for reduced motion or weak phones:
   - visual effects (glass, glow, depth) bring a small CSS file, switched on with `data-effects="…"`;
   - motion effects (spring, bounce) return a Motion preset.
 
   Adding an effect means one new file and one line in the list. Settings shows it automatically, and components ask for "the active effect", never for a specific one.
+
 - **Plain CSS** only for what Tailwind can't express well (complex keyframes, the pointer glow), kept next to the component that needs it.
 
 **Alternatives:** CSS Modules (plain scoped CSS; more files, consistency left to discipline); CSS-in-JS such as styled-components (runs while the page loads, so slower); zero-runtime CSS-in-TS such as vanilla-extract or Panda (type-checked theme tokens, but more setup and a smaller community).

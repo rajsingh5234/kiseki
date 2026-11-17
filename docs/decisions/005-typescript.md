@@ -11,18 +11,18 @@
 
 ## The base settings
 
-| Setting | What it does |
-| --- | --- |
-| `target`, `lib`: `es2025` | Modern JavaScript only. No Node or browser APIs: each preset adds its own environment, so browser code can't use Node-only APIs and vice versa. |
-| `strict` | All of TypeScript's strict checks (e.g. no implicit `any`, `null` must be handled). |
-| `noUncheckedIndexedAccess` | `list[5]` and `map[key]` may be `undefined`, so missing items are handled before they crash. |
-| `noImplicitOverride` | A method that replaces a parent class's method must say `override`, so renaming the parent method can't silently break a child. |
-| `verbatimModuleSyntax`, `isolatedModules` | Type-only imports must say `import type`. Each file can then be read on its own, as Node, Vite and Vitest do. |
-| `erasableSyntaxOnly` | Blocks `enum`, `namespace` and constructor parameter properties (`constructor(private repo: IRepo)`), which produce code instead of being erasable. We use `as const` objects and write fields out in full. |
-| `moduleDetection: force` | Every file is a module with its own scope, never a global script. |
-| `allowImportingTsExtensions` | Relative imports end in `.ts` (`./task.service.ts`), as Node requires when it runs TypeScript directly. |
-| `noEmit` | TypeScript never writes JavaScript files; it only checks. |
-| `skipLibCheck` | Skips type-checking libraries' own type files: much faster, and their errors aren't ours to fix. |
+| Setting                                   | What it does                                                                                                                                                                                                |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `target`, `lib`: `es2025`                 | Modern JavaScript only. No Node or browser APIs: each preset adds its own environment, so browser code can't use Node-only APIs and vice versa.                                                             |
+| `strict`                                  | All of TypeScript's strict checks (e.g. no implicit `any`, `null` must be handled).                                                                                                                         |
+| `noUncheckedIndexedAccess`                | `list[5]` and `map[key]` may be `undefined`, so missing items are handled before they crash.                                                                                                                |
+| `noImplicitOverride`                      | A method that replaces a parent class's method must say `override`, so renaming the parent method can't silently break a child.                                                                             |
+| `verbatimModuleSyntax`, `isolatedModules` | Type-only imports must say `import type`. Each file can then be read on its own, as Node, Vite and Vitest do.                                                                                               |
+| `erasableSyntaxOnly`                      | Blocks `enum`, `namespace` and constructor parameter properties (`constructor(private repo: IRepo)`), which produce code instead of being erasable. We use `as const` objects and write fields out in full. |
+| `moduleDetection: force`                  | Every file is a module with its own scope, never a global script.                                                                                                                                           |
+| `allowImportingTsExtensions`              | Relative imports end in `.ts` (`./task.service.ts`), as Node requires when it runs TypeScript directly.                                                                                                     |
+| `noEmit`                                  | TypeScript never writes JavaScript files; it only checks.                                                                                                                                                   |
+| `skipLibCheck`                            | Skips type-checking libraries' own type files: much faster, and their errors aren't ours to fix.                                                                                                            |
 
 ## Alternatives
 

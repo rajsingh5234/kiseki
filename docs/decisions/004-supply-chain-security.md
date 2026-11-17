@@ -11,12 +11,12 @@ In 2025 attackers stole npm maintainers' tokens and published poisoned versions 
 
 Keep pnpm 12's safe defaults and add one more check, all in `pnpm-workspace.yaml`:
 
-| Protection | Setting | Status |
-| --- | --- | --- |
-| Don't install a version published less than 1 day ago | `minimumReleaseAge` (1440 minutes) | pnpm default, kept |
-| Dependencies can't run install scripts unless we approve each one | `allowBuilds`, `strictDepBuilds` | pnpm default, kept |
-| A dependency of a dependency can't pull code from git or raw URLs | `blockExoticSubdeps` | pnpm default, kept |
-| Stop the install if a package's new version has weaker publishing proof than earlier ones (a sign of a stolen token) | `trustPolicy: no-downgrade` | **Turned on by us** |
+| Protection                                                                                                           | Setting                            | Status              |
+| -------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------- |
+| Don't install a version published less than 1 day ago                                                                | `minimumReleaseAge` (1440 minutes) | pnpm default, kept  |
+| Dependencies can't run install scripts unless we approve each one                                                    | `allowBuilds`, `strictDepBuilds`   | pnpm default, kept  |
+| A dependency of a dependency can't pull code from git or raw URLs                                                    | `blockExoticSubdeps`               | pnpm default, kept  |
+| Stop the install if a package's new version has weaker publishing proof than earlier ones (a sign of a stolen token) | `trustPolicy: no-downgrade`        | **Turned on by us** |
 
 ## Alternatives
 

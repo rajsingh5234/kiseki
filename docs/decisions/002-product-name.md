@@ -26,6 +26,6 @@ In code, our own packages use the `@kiseki/` scope (e.g. `@kiseki/ui`, `@kiseki/
 ## Risks and follow-ups
 
 - **Kiteki**, a routine-planner app, sounds similar.
-- *Kiseki* is also the name of a well-known video-game series, so plain searches may show games.
+- _Kiseki_ is also the name of a well-known video-game series, so plain searches may show games.
 - `kiseki.com` (since 1999) and `kiseki.app` are taken. Choose a variant (e.g. `getkiseki.com`, `kiseki.study`) at the deploy step.
 - Before launch: a trademark search on the official registry (India: ipindia.gov.in, software classes 9 and 42), then file our own trademark.
