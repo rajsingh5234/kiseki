@@ -23,7 +23,7 @@
 ## Status
 
 - Foundation decided: [docs/decisions/001-foundation.md](docs/decisions/001-foundation.md) (stack, architecture and the reasons).
-- Now: setting up the monorepo base, one file at a time.
+- Now: setting up the monorepo base, one file at a time. Done: tooling, and the API base (config, logging, request IDs, health module, composition root, graceful shutdown; [decision 007](docs/decisions/007-api-foundation.md)). Next: Postgres + Drizzle, then the web app, contracts and CI.
 - Next: plan Phase 1 (goal, features, build order, non-goals) in [docs/product/phase-1.md](docs/product/phase-1.md). Phase 1 includes the foundation (no separate Phase 0), including in detail what must be built now so future features are easy to add. **No feature code until that plan is agreed.**
 
 ## Folder structure (target)
@@ -59,8 +59,9 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - API layers: route → controller → service → repository → database. Controllers never touch repositories; services own business rules and transactions; repositories only read and write their own module's tables.
 - Modules talk to each other only through their public `index.ts` (or events); never through another module's repository or tables. Lint blocks `#modules/<name>/<anything>` except `#modules/<name>/index.ts` (`no-restricted-imports`).
 - Web and API share request/response types only through `packages/contracts`.
-- Only the entry point reads `process.env`; it passes it to `loadConfig()` once, and everything else receives the validated, frozen `config` ([decision 007](docs/decisions/007-api-foundation.md)).
-- Zod appears only in `packages/contracts`, `*.validation.ts` files and `core/config/` ([decision 001 §7](docs/decisions/001-foundation.md)).
+- Only the entry point reads `process.env`; it passes it to `loadConfig()` once, and everything else receives the validated, frozen `config` ([decision 007](docs/decisions/007-api-foundation.md)). Lint: `node/no-process-env`.
+- Zod appears only in `packages/contracts`, `*.validation.ts` files and `core/config/` ([decision 001 §7](docs/decisions/001-foundation.md)). Lint: `no-restricted-imports`.
+- Lint rules live in `oxlint.config.ts`: each import limit is a named constant, combined per file group (an override replaces a rule's options, it doesn't merge them).
 
 **Imports**
 
@@ -110,4 +111,4 @@ Use Node 26 and pnpm 12 ([decision 003](docs/decisions/003-tool-versions.md)). C
   - root-only tool: `pnpm add -D -w --save-exact <name>`;
   - used by one package: `pnpm --filter <package> add --save-exact <name>`;
   - used by two or more packages: put its version in the `catalog:` of `pnpm-workspace.yaml` (`--save-catalog --save-exact`) and reference it as `"catalog:"`.
-- Local env: copy `apps/api/.env.example` to `apps/api/.env` (never committed); blank values mean "use the default".
+- Local env: copy `apps/api/.env.example` to `apps/api/.env` (never committed); blank values mean "use the default". Shell variables don't reach `pnpm dev` (Turborepo's strict env mode hides them), so local settings go here. `pnpm dev` serves the API on `http://127.0.0.1:3000` with readable logs; Ctrl+C stops it gracefully.

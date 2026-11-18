@@ -7,13 +7,14 @@
       "#*": "./src/*"
    },
    "scripts": {
-      "dev": "node --watch src/server.ts",
+      "dev": "NODE_ENV=development node --env-file-if-exists=.env --watch src/server.ts | pino-pretty --ignore pid,hostname --translateTime SYS:HH:MM:ss.l",
       "start": "node src/server.ts",
       "typecheck": "tsc",
       "test": "vitest run --coverage",
       "test:watch": "vitest"
    },
    "dependencies": {
+      "close-with-grace": "2.5.0",
       "fastify": "5.12.8",
       "zod": "4.6.7"
    },
@@ -22,6 +23,7 @@
       "@kiseki/vitest-config": "workspace:*",
       "@types/node": "catalog:",
       "@vitest/coverage-v8": "catalog:",
+      "pino-pretty": "13.2.0",
       "typescript": "catalog:",
       "vite": "catalog:",
       "vitest": "catalog:"

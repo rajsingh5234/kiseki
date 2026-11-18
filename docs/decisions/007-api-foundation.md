@@ -8,8 +8,18 @@
 ### Running the API
 
 - **Node 26 runs our `.ts` files directly** (`node src/server.ts`, `node --watch` in development). No build step and no extra runner (`tsx`, `nodemon`, `ts-node`): what runs in development is what runs in production. Types are checked by the editor, the pre-commit hook and CI, never at runtime.
-- **App and server are split:** `app.ts` exports `buildApp(config)`, which wires Fastify without opening a port; `server.ts` loads the config, listens and shuts down gracefully. Tests call `buildApp()` and send fake requests with `app.inject()`.
-- **Two health endpoints:** `GET /health/live` (the process is running; failing means restart it) and `GET /health/ready` (it can serve users, later including the database; failing means stop sending traffic, don't restart).
+- **App and server are split:** `app.ts` exports `buildApp(config, modules)` (changed on 2026-11-18: it first took only `config`), which wires Fastify without opening a port and registers each module under its prefix; `server.ts` loads the config, listens and shuts down gracefully. Tests call `buildApp()` and send fake requests with `app.inject()`.
+- **Composition root:** `composition-root.ts` exports `composeModules()`, the list of every module, already built (shared pieces such as the database are created there and handed to modules). Every module returns the same `ApiModule` shape (`{ prefix, routes }`), so adding a feature is one line there and `app.ts` never changes. It is separate from `buildApp` because the worker entry point (decision 001) will reuse it without HTTP.
+- **Two health endpoints** (`modules/health/`): `GET /health/live` (the process is running; failing means restart it) and `GET /health/ready` (it can serve users; failing means stop sending traffic, don't restart). Ready runs a list of `IHealthCheck`s handed in by the composition root (none yet; the database adds one), all in parallel; a check that fails or throws gives `503 {"status":"unavailable"}`. Which check failed is logged as a warning, never returned. Both routes log only warnings and above (probes come every few seconds) and send `Cache-Control: no-store`.
+- **Request safety in `app.ts`:** an incoming `x-request-id` is reused only if it is 1–128 characters of letters, digits, `_ . : -` (otherwise a new UUID), so nobody can inject fake log lines; requests that take over 30 seconds to arrive are cut off (Fastify's default is no limit, which allows slow-connection attacks).
+
+### Startup and shutdown (`server.ts`, added 2026-11-18)
+
+- **Bad config:** the `ConfigError` list is printed (no stack trace) and the process exits with code 1. **Port busy or bad host:** a `fatal` log, exit code 1. Any other failure keeps its stack trace.
+- **Graceful shutdown with `close-with-grace`** (Fastify's maintainer, no dependencies): on SIGTERM or SIGINT, and on an uncaught error or unhandled rejection, it calls `app.close()`. That stops new connections, finishes requests in progress, answers 503 to new requests on open connections (Fastify's `return503OnClosing`) and runs `onClose` hooks (the database later). Exit code 0 after a clean stop, 1 after a crash, or after 10 seconds if closing hangs; a second signal exits at once.
+- **Not yet: a drain delay** (mark not ready, wait a few seconds for the load balancer, then close). Whether it is needed depends on the hosting platform, so it is decided at the deploy step; it would be one `IHealthCheck` plus a wait.
+- **Development:** `pnpm dev` runs `NODE_ENV=development node --env-file-if-exists=.env --watch src/server.ts | pino-pretty --ignore pid,hostname --translateTime SYS:HH:MM:ss.l`. The app always writes JSON; pino-pretty only formats the terminal. Turborepo's strict env mode hides shell variables, so local settings go in `.env`.
+- **Tested as a real process:** `server.test.ts` starts `node src/server.ts` on a free port, waits for its "Server listening" log line (no polling), calls `/health/live`, sends SIGTERM or SIGINT and expects exit code 0; it also checks the bad-config and busy-port exits. Coverage can't see a child process, so `server.ts` is excluded from the coverage count.
 
 ### Configuration (`apps/api/src/core/config/`)
 
@@ -26,7 +36,7 @@
 - Fastify's built-in Pino logger, configured by `loggerOptions(config)`:
   - level per environment: test → `silent`, development → `debug`, production → `info`; `LOG_LEVEL` overrides it;
   - secrets redacted to `[REDACTED]`: `authorization`, `cookie`, `set-cookie`, and `password`/`token` fields at the top level or one level down. Fastify's default request log has no headers; this is a safety net for anything logged by hand.
-- Request IDs (a UUID, or the incoming `x-request-id`, echoed in the response) are a Fastify server option, set in `app.ts`.
+- Request IDs (a UUID, or a valid incoming `x-request-id`, echoed in the response) are a Fastify server option, set in `app.ts`; every log line of a request carries it as `reqId`.
 - Readable development output with `pino-pretty`, piped in the `dev` script, so production never loads it.
 - Our own `ILogger` interface comes when the first service needs to log, not before.
 
@@ -56,6 +66,10 @@
 - **`@fastify/env`, `envalid`, `t3-env`:** a second validation tool next to Zod, or config tied to Fastify (config is needed before Fastify starts).
 - **One root Vitest config for all packages** ("projects" mode): one command, but no per-package caching.
 - **Versions in each `package.json`, or `syncpack`:** drift, or an extra tool for what pnpm already does.
+- **Shutdown by hand** (our own signal handlers): no dependency, but easy to miss a second signal, a crash during shutdown, or a close that never ends. **No shutdown handling:** SIGTERM cuts requests off mid-way on every deploy.
+- **`@fastify/under-pressure`** for health: also answers 503 when the server is overloaded; worth adding on top at the deploy step, but it doesn't do module-supplied checks.
+- **pino-pretty as a Pino transport inside the app:** one command, but production code would know about a dev tool and start an extra thread.
+- **Health checks built into the health service** (importing the database directly): simpler, but ties health to every module it checks.
 
 ## Why
 
