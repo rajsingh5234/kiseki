@@ -13,9 +13,16 @@
 - `pnpm-lock.yaml` is never formatted: pnpm owns it.
 - Scripts: `pnpm format` (fix), `pnpm format:check` (CI).
 
-### Linter: oxlint with type-aware rules (`.oxlintrc.json`)
+### Linter: oxlint with type-aware rules (`oxlint.config.ts`)
 
-- Plugins: `eslint`, `typescript`, `unicorn`, `oxc`, `import`, `promise`. React, accessibility, Vitest and Node plugins are added with the web app, tests and API. Module-boundary rules come with the first modules. (Added 2026-11-18 with the health module: `no-restricted-imports` blocks `#modules/*/**` except `#modules/*/index.ts`, so other code reaches a module only through its public `index.ts`; files inside a module use `./` and are not affected. It is listed twice in `.oxlintrc.json`, in the base rules and again in the non-test override, because an override replaces a rule's options instead of merging them.)
+(Changed on 2026-11-18: the config moved from `.oxlintrc.json` to `oxlint.config.ts`. An override replaces a rule's options instead of merging them, so each file group must list every import limit that applies to it; in TypeScript each limit is a named constant written once, comments can explain each rule, and `defineConfig` checks rule names and options in the editor. oxlint and the Oxc VS Code extension find the file automatically.)
+
+- Plugins: `eslint`, `typescript`, `unicorn`, `oxc`, `import`, `promise`. React, accessibility, Vitest and Node plugins are added with the web app, tests and API. Module-boundary rules come with the first modules. (Added 2026-11-18 with the health module: `no-restricted-imports` blocks `#modules/*/**` except `#modules/*/index.ts`, so other code reaches a module only through its public `index.ts`; files inside a module use `./` and are not affected.)
+- Import and env limits (added 2026-11-18), enforcing the dependency rules in CLAUDE.md:
+  - **module boundary:** another module only through its `index.ts`;
+  - **no Zod** outside `packages/contracts`, `*.validation.ts` and `apps/api/src/core/config/` (decision 001 §7), tests included;
+  - **no fixtures** outside tests;
+  - **`node/no-process-env`:** only `apps/api/src/server.ts` reads `process.env` (decision 007).
 - Categories: `correctness` and `suspicious` are errors, `perf` is a warning, `pedantic` and `style` are off (taste and noise; the formatter owns style).
 - Type-aware rules on (`oxlint-tsgolint`, built on TypeScript 7): catches forgotten `await`s and unhandled promises.
 - Script: `pnpm lint`. It fails with "No files found" until the repo has code; this is kept on purpose, because hiding it would also hide an ignore rule that skips all our code.
