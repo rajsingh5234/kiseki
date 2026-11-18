@@ -1,11 +1,10 @@
-import { Writable } from "node:stream";
-
 import Fastify from "fastify";
 import { describe, expect, it } from "vitest";
 
 import { testConfig } from "#core/config/app-config.fixture.ts";
 import type { AppConfig } from "#core/config/app-config.ts";
 
+import { logCapture } from "./log-capture.fixture.ts";
 import { loggerOptions } from "./logger-options.ts";
 
 function levelFor(config: AppConfig): unknown {
@@ -14,13 +13,7 @@ function levelFor(config: AppConfig): unknown {
 }
 
 function captureLogs(config: AppConfig): { lines: string[]; app: ReturnType<typeof Fastify> } {
-   const lines: string[] = [];
-   const stream = new Writable({
-      write(chunk: Buffer, _encoding, done) {
-         lines.push(chunk.toString());
-         done();
-      },
-   });
+   const { stream, lines } = logCapture();
    const options = loggerOptions(config);
    const app = Fastify({ logger: typeof options === "object" ? { ...options, stream } : options });
    return { lines, app };
