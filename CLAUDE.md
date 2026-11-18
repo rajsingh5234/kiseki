@@ -80,6 +80,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Tests sit next to the code they test: `task.service.test.ts` beside `task.service.ts`.
 - Test-only helpers that build valid test data live in `*.fixture.ts` beside the code (e.g. `testConfig()` in `app-config.fixture.ts`): one builder with defaults, each test overrides only what it's about. Only `*.test.ts` files may import them (lint: `no-restricted-imports`).
 - Each test file groups its tests into `describe("happy path")` (valid input, success) and `describe("sad path")` (bad input, errors). Import `describe`/`it`/`expect` from `vitest` explicitly (no globals).
+- Code style is a mix ([decision 008](docs/decisions/008-functions-for-stateless-helpers.md)): classes for anything with dependencies or state (services, repositories, controllers, errors); plain exported functions for stateless helpers (never static-only classes); factory functions for wiring (`buildApp`, `createTaskModule`).
 - TypeScript is erasable-only: no `enum` (use `as const` objects), no constructor parameter properties (declare fields and assign them) ([decision 005](docs/decisions/005-typescript.md)).
 - Commit messages are conventional: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` (e.g. `feat: add timetable`).
 
