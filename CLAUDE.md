@@ -23,8 +23,8 @@
 ## Status
 
 - Foundation decided: [docs/decisions/001-foundation.md](docs/decisions/001-foundation.md) (stack, architecture and the reasons).
-- Now: setting up the monorepo base, one file at a time. Done: tooling, and the API base (config, logging, request IDs, health module, composition root, graceful shutdown; [decision 007](docs/decisions/007-api-foundation.md)). Next: Postgres + Drizzle, then the web app, contracts and CI.
-- Next: plan Phase 1 (goal, features, build order, non-goals) in [docs/product/phase-1.md](docs/product/phase-1.md). Phase 1 includes the foundation (no separate Phase 0), including in detail what must be built now so future features are easy to add. **No feature code until that plan is agreed.**
+- Setup paused at a clean checkpoint. Done: tooling, and the API base (config, logging, request IDs, health module, composition root, graceful shutdown; [decision 007](docs/decisions/007-api-foundation.md)). Left: Postgres + Drizzle, the web app, contracts and CI. They depend on product decisions (data model, login, offline/PWA, first screens), so they become the first part of Phase 1's build order instead of being built first.
+- Next: plan Phase 1 in [docs/product/phase-1.md](docs/product/phase-1.md), one topic at a time: goal → core journey → features and non-goals → foundation decisions the features force (login, offline/PWA, notifications, data model) → build order (remaining setup first). Phase 1 includes the foundation (no separate Phase 0), including in detail what must be built now so future features are easy to add. The user says when the discussion starts. **No feature code until that plan is agreed.**
 
 ## Folder structure (target)
 
