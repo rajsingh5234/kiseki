@@ -48,7 +48,7 @@ kiseki/
 Feature-based on both sides: everything about one feature lives in one folder with a public `index.ts` (details in [decision 001 §22](docs/decisions/001-foundation.md)).
 
 - `apps/api/src/core/`: shared building blocks, e.g. `config/` (env validation: the only code that knows the env shape) and `logger/`.
-- `apps/api/src/modules/<name>/`: layered inside: `<name>.module|routes|controller|service|repository|types.ts`. `<name>.module.ts` wires the module (manual DI); `composition-root.ts` calls each module's factory.
+- `apps/api/src/modules/<name>/`: layered inside: `<name>.module|routes|controller|service|repository|types.ts`. `<name>.module.ts` wires the module (manual DI); `composition-root.ts` calls each module's factory. Files stay flat in the module folder (no folder per layer: the suffix already names the layer). A module past about 10 files splits into sub-feature folders (`planner/timetable/`, `planner/targets/`), each flat inside.
 - `apps/web/src/`: `app/` (shell, router, providers), `features/<name>/` (`components/`, `hooks/`, `api/`), `shared/`.
 - Our own packages export TypeScript source directly (no build step) and use the `@kiseki/` scope, e.g. `@kiseki/ui`.
 
@@ -57,7 +57,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Apps use packages; apps never import each other.
 - Extensions import only `extension-sdk`, `contracts` and `ui`; never apps or other extensions. The host knows extensions only through their manifests.
 - API layers: route → controller → service → repository → database. Controllers never touch repositories; services own business rules and transactions; repositories only read and write their own module's tables.
-- Modules talk to each other only through their public `index.ts` (or events); never through another module's repository or tables.
+- Modules talk to each other only through their public `index.ts` (or events); never through another module's repository or tables. Lint blocks `#modules/<name>/<anything>` except `#modules/<name>/index.ts` (`no-restricted-imports`).
 - Web and API share request/response types only through `packages/contracts`.
 - Only the entry point reads `process.env`; it passes it to `loadConfig()` once, and everything else receives the validated, frozen `config` ([decision 007](docs/decisions/007-api-foundation.md)).
 - Zod appears only in `packages/contracts`, `*.validation.ts` files and `core/config/` ([decision 001 §7](docs/decisions/001-foundation.md)).
@@ -81,6 +81,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Test-only helpers that build valid test data live in `*.fixture.ts` beside the code (e.g. `testConfig()` in `app-config.fixture.ts`): one builder with defaults, each test overrides only what it's about. Only `*.test.ts` files may import them (lint: `no-restricted-imports`).
 - Each test file groups its tests into `describe("happy path")` (valid input, success) and `describe("sad path")` (bad input, errors). Import `describe`/`it`/`expect` from `vitest` explicitly (no globals).
 - Code style is a mix ([decision 008](docs/decisions/008-functions-for-stateless-helpers.md)): classes for anything with dependencies or state (services, repositories, controllers, errors); plain exported functions for stateless helpers (never static-only classes); factory functions for wiring (`buildApp`, `createTaskModule`).
+- Class fields hidden from outside use `private readonly` (TypeScript's `private`, not JavaScript's `#`), declared as fields and assigned in the constructor.
 - TypeScript is erasable-only: no `enum` (use `as const` objects), no constructor parameter properties (declare fields and assign them) ([decision 005](docs/decisions/005-typescript.md)).
 - Commit messages are conventional: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` (e.g. `feat: add timetable`).
 

@@ -15,7 +15,7 @@
 
 ### Linter: oxlint with type-aware rules (`.oxlintrc.json`)
 
-- Plugins: `eslint`, `typescript`, `unicorn`, `oxc`, `import`, `promise`. React, accessibility, Vitest and Node plugins are added with the web app, tests and API. Module-boundary rules come with the first modules.
+- Plugins: `eslint`, `typescript`, `unicorn`, `oxc`, `import`, `promise`. React, accessibility, Vitest and Node plugins are added with the web app, tests and API. Module-boundary rules come with the first modules. (Added 2026-11-18 with the health module: `no-restricted-imports` blocks `#modules/*/**` except `#modules/*/index.ts`, so other code reaches a module only through its public `index.ts`; files inside a module use `./` and are not affected. It is listed twice in `.oxlintrc.json`, in the base rules and again in the non-test override, because an override replaces a rule's options instead of merging them.)
 - Categories: `correctness` and `suspicious` are errors, `perf` is a warning, `pedantic` and `style` are off (taste and noise; the formatter owns style).
 - Type-aware rules on (`oxlint-tsgolint`, built on TypeScript 7): catches forgotten `await`s and unhandled promises.
 - Script: `pnpm lint`. It fails with "No files found" until the repo has code; this is kept on purpose, because hiding it would also hide an ignore rule that skips all our code.
