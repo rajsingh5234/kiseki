@@ -105,6 +105,7 @@ Use Node 26 and pnpm 12 ([decision 003](docs/decisions/003-tool-versions.md)). C
 - `pnpm build` / `pnpm dev` / `pnpm typecheck` / `pnpm test`: run that task in every package through Turborepo. `pnpm test` enforces 80% coverage; `pnpm test:watch` re-runs tests on save.
 - `pnpm lint`: oxlint with type-aware rules ([decision 006](docs/decisions/006-code-quality-tooling.md)).
 - `pnpm format` / `pnpm format:check`: format with oxfmt, or only check (CI).
+- `pnpm audit`: must stay clean. An advisory that can't be fixed yet and doesn't reach us is skipped one by one (`auditConfig.ignoreGhsas`) and recorded in [decision 004](docs/decisions/004-supply-chain-security.md), then removed when the fix ships.
 - Adding a dependency (always exact versions; check the result against [decision 004](docs/decisions/004-supply-chain-security.md)):
   - root-only tool: `pnpm add -D -w --save-exact <name>`;
   - used by one package: `pnpm --filter <package> add --save-exact <name>`;

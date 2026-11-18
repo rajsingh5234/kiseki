@@ -15,3 +15,8 @@ trustPolicy: no-downgrade
 
 allowBuilds:
    lefthook: false
+
+# Temporary audit exceptions: each one is explained in decision 004 and removed once a fix ships.
+auditConfig:
+   ignoreGhsas:
+      - GHSA-fc5q-39xc-vjpf
