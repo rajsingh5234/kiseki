@@ -2,18 +2,40 @@ import type { FastifyInstance } from "fastify";
 import { describe, expect, it, onTestFinished } from "vitest";
 
 import { testConfig } from "#core/config/app-config.fixture.ts";
+import type { ApiModule } from "#core/http/api-module.ts";
 import { UUID } from "#core/http/request-id.fixture.ts";
 
 import { buildApp } from "./app.ts";
 
-function setup(): FastifyInstance {
-   const app = buildApp(testConfig());
+const PING_MODULE: ApiModule = {
+   prefix: "/ping",
+   routes: (app, _options, done) => {
+      app.get("/", () => ({ pong: true }));
+      done();
+   },
+};
+
+function setup(modules: readonly ApiModule[] = []): FastifyInstance {
+   const app = buildApp(testConfig(), modules);
    onTestFinished(() => app.close());
    return app;
 }
 
 describe("buildApp", () => {
    describe("happy path", () => {
+      it("registers each module under its prefix", async () => {
+         const app = setup([PING_MODULE]);
+
+         const response = await app.inject({
+            url: "/ping",
+            headers: { "x-request-id": "trace-42" },
+         });
+
+         expect(response.statusCode).toBe(200);
+         expect(response.json()).toEqual({ pong: true });
+         expect(response.headers["x-request-id"]).toBe("trace-42");
+      });
+
       it("gives every response a new request ID", async () => {
          const app = setup();
 
