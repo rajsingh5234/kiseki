@@ -37,7 +37,7 @@ Every Phase 1 decision is checked against this: if a feature doesn't serve the g
 
 ### What each track is for
 
-- **UPSC:** **Prelims** for now (GS Paper 1 and CSAT: a huge amount to remember, so revision and practice questions matter most). The first UPSC user is on a **repeat attempt**, not a beginner: she already knows the syllabus and needs to find and fix weak areas. **This will change:** after Prelims comes Mains (written answers, optional subject), then the interview. So a track has **stages**, and a user moves to the next stage without losing progress (much of the syllabus overlaps). Stages are data, like everything else in a track.
+- **UPSC:** **Prelims** for now (GS Paper 1 and CSAT: a huge amount to remember, so revision and practice questions matter most). The first UPSC user is planned for as **starting fresh**: going through the syllabus from the beginning. The app also supports users on a repeat attempt (marking covered topics quickly, focusing on weak areas). **This will change:** after Prelims comes Mains (written answers, optional subject), then the interview. So a track has **stages**, and a user moves to the next stage without losing progress (much of the syllabus overlaps). Stages are data, like everything else in a track.
 - **DSA:** preparing for job interviews, by a target date: must-know topics and problems, patterns, and revisiting problems got wrong.
 
 ### Problems to solve
@@ -97,7 +97,72 @@ Both users use all four moments:
 - **The user sets the routine:** time blocks per subject or track (e.g. "5:30–6:30 Geography", "7–8 pm DSA"), plus personal blocks. The user decides **when**.
 - **The app fills each study block** with exactly **what** to do: the next topic in the syllabus, revision that is due, problems to solve. Missed blocks are re-planned instead of left as failures.
 - **The user can change anything**, any block, any day.
+- **New topics versus revision:** the app fills each study block starting from what is **due for revision** (things about to be forgotten), then new topics, and **shifts toward revision as the target date gets closer** (for a starter, roughly: mostly new early on, about even in the middle months, mostly revision and mocks in the last 2–3 months; the real split depends on pace and syllabus size and is tuned at the check-ins). Revision is woven into each subject's blocks ("Polity: revise ch. 3, then ch. 6"), not left to one block at the end of the day. A slider per track lets the user lean "more new" or "more revision" at any time. This prevents the classic first-attempt failure: syllabus covered, but forgotten by the exam.
 - How the app picks (topic order, revision timing, balancing tracks) is designed later.
+
+### Different days (decided 2026-11-20)
+
+Not every day is the same (weekends, work days, busy days), so:
+
+- **A weekly routine:** each day of the week has its own routine (time blocks, study and personal). Each user sets their own study days and days off; the app assumes no fixed day off.
+- **One-tap changes for a single day:**
+  - **Light day:** the user picks a length (30 min, 1 hour, 2 hours); the app keeps the most important work (revision due first, then high-importance topics) and re-plans the rest. Across tracks, it picks from all of them (shared time).
+  - **Day off:** no study; that day's work re-plans across the coming days, with the forecast effect shown.
+  - **Copy a routine** from another day ("make Saturday like Sunday").
+- **Plan ahead:** future days (a wedding, travel, a college exam) can be marked now, so the plan and forecast adjust in advance.
+- **Streak rules:**
+  - a **planned day off** doesn't break the streak: the streak counts "studied on every planned study day";
+  - a completed **light day** counts: a short day keeps the habit alive;
+  - an **unplanned miss** breaks the streak, but can be marked as a **rest day afterwards**, up to **2 a month by default**; each user can change this limit, since the streak is their own motivation tool.
+
+### Today's plan stays stable (decided 2026-11-20)
+
+A plan that changes by itself can't be trusted, so:
+
+- **The app never changes today without asking.** Re-planning (missed blocks, new topics, changed targets) only moves **tomorrow onward**. Today changes only when the user changes it (moves a block, marks a light day).
+- **When today gets fixed:** when the user finishes the nightly review (they have seen and accepted it); if they skip the review, at the start of their first study block. The morning plan is never a surprise.
+- **Suggestions, not changes:** the app may suggest, and the user decides:
+  - finished a block early: "You have 30 min free: revise Rivers of India?";
+  - skipped a block: "Move it to later today, or let it re-plan?" (default: re-plan);
+  - a personal block runs late: "Polity starts in 10 min; shorten it?" (only if it affects a study block).
+
+  One suggestion per event; once ignored, it doesn't repeat.
+
+- **A study day ends at 4 am by default** (each user can change it), so studying until 1 am still counts as "today": for the streak, study hours and today's plan.
+- **The same plan on every device:** phone and laptop always show the same fixed plan.
+
+### Why this item? (decided 2026-11-20)
+
+If the app's choices feel random, people stop trusting them and plan by hand again, so:
+
+- **A short reason tag on every planned item:** "due", "weak", "next", "high-weight". **Tapping it shows the full reason** ("Last revised 12 days ago · you marked it unsure"). A clean screen, with details on demand; over time it also teaches why spaced revision works.
+- **"Not this one" asks why, in one tap** (skippable: closing it counts as "not now"), and each answer teaches the app:
+
+  | Answer                    | What the app does                                        |
+  | ------------------------- | -------------------------------------------------------- |
+  | "I already know it"       | Marks it strong; revision comes back much later          |
+  | "Not now"                 | Moves it later; nothing else changes                     |
+  | "Too hard right now"      | Marks it weak and suggests an easier related topic first |
+  | "Not part of my syllabus" | Offers to hide the topic (can be undone)                 |
+
+- **"Don't ask again"** is on the question itself; it can be switched back on in settings.
+
+### A realistic routine and wellbeing (decided 2026-11-20)
+
+A routine that is too much from the start (e.g. 12–13 study hours every day) makes every day end "behind", so:
+
+- **The app never blocks a routine.** Instead, it coaches from **real data**: when actual study stays **below about 70% of planned for 2 weeks**, the weekly report offers a realistic plan **a little above** the real average (e.g. actual 6.5 h → plan 7.5 h), with the forecast for both ("A plan of 7.5 h a day still finishes the syllabus by April. Switch?"). Framed as a way to get there, never as failure.
+- **"Keep my plan"** is always an option; the app then doesn't ask again for 30 days.
+- The 70% and 2-week numbers are tuned at the check-ins.
+- **Wellbeing hints,** based on the routine (what is planned, not tracking the body):
+
+  | Hint   | When                                                                                     | Example                                                                    |
+  | ------ | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | Sleep  | The routine leaves less than 7 hours between the last block and the next morning's first | "Your routine leaves 6 h for sleep. Most people remember more with 7–8 h." |
+  | Breaks | More than 3 hours of study without a break                                               | "3.5 h without a break; a short break helps you focus in the next block."  |
+  | Rest   | No day off or light day in 4 weeks                                                       | "4 weeks without a rest day; a light day can keep you going longer."       |
+
+- **Hint rules:** shown when the routine is created or edited (the rest hint at most once a month), never repeatedly; gentle and informational ("most people…", never "you must"); no medical advice; "Don't show again" on each hint, also switchable in settings; they never block anything.
 
 ### Weekly and monthly targets (decided 2026-11-20)
 
@@ -120,6 +185,18 @@ About two taps, and it is all the app knows about how study is going:
 - **How well**, one tap: UPSC "confident / unsure / weak"; DSA "solved alone / with hints / couldn't solve". Weak or failed items come back for revision sooner, strong ones later; this is how weak areas are found.
 - **Optional timer** for those who like it; without it, the planned time counts.
 - These are built-in study fields (the planning and revision engine needs them), separate from custom trackers.
+
+### Study mode and phone distractions (decided 2026-11-20)
+
+The UPSC user asked for the app to block phone notifications while studying. A web app can't: phones don't let web apps change Do Not Disturb or block other apps. So, for her Android phone:
+
+- **Study mode:** started from Today or from a block, it opens a **focus screen** (the current block and topic, an optional timer, a "done" button) and asks her to **turn on Do Not Disturb** ("swipe down → tap Do Not Disturb", with a picture for her phone; buttons "Done" and "Not today").
+- **Turning DND off matters as much:** ending study mode reminds her to turn DND off. If she forgets to end it, one notification **15 minutes after the session's last block**: "Study mode is still on. End it and turn off DND?"
+- **A nudge at the planned start:** at the start of a study session (consecutive study blocks between personal blocks), one notification: "Polity at 5:30. Start study mode?", with **"Start now"** and **"In 10 min"**. No nudge if study mode is already on. The user picks how often: every session (default), first session of the morning and afternoon, or off.
+- **A missed nudge is never a failure:** no "missed session" message; the plan re-plans as usual.
+- **Notification permission is asked in context**, the first time nudges or reminders are turned on, with one line saying why, never on the first screen.
+- **Few, useful notifications:** one settings screen lists every notification (study-mode nudge, DND-off reminder, nightly review), each with its own on/off.
+- **Later, in a native Android app:** study mode turns DND on and off by itself, with her permission. **Not in Phase 1:** a guided automatic DND schedule (she wouldn't set it up). Kept as an idea.
 
 ### Unfinished work (decided 2026-11-20)
 
@@ -158,7 +235,7 @@ Automatic questions on the **completed** syllabus, focused on what is **weak** f
 Problem 4: what's strong or weak, and am I on track for my date?
 
 - **What the user sees:** a **headline number** with its trend, a **topic map** (strong / okay / weak / not enough data yet) and a **target-date forecast**, plus a **weekly report** with 1–2 concrete suggestions (e.g. "Polity has been weak for 2 weeks; add one revision block?").
-- **Strength, not just coverage:** progress comes from "how well" taps and revision results, not from "covered". For a repeat attempt, what matters is what she still remembers, not what she once read.
+- **Strength, not just coverage:** progress comes from "how well" taps and revision results, not from "covered". What matters is what the user still remembers, not what they once read: a "100% covered" bar can hide a forgotten syllabus.
 - **Strength fades** slowly when a topic isn't revised (as memory does); fading topics are what the revision engine brings back.
 - **Honest with little data:** "not enough data yet" instead of a false "weak"; the forecast appears only once there's enough history, and says how confident it is.
 - **Show improvement** ("Geography: weak → okay this week"), not only the current state.
@@ -201,6 +278,18 @@ Every user tracks different things (her paper planner tracks mood, water, gratit
 - **Never an empty screen:** every track comes with good defaults (a layout and the trackers it needs); customising is optional.
 - **Not full design freedom** (free-form pages like Notion): expensive, and free layouts break on phones and hurt accessibility. The look is covered by themes.
 - Trackers are data and the dashboard is a slot of cards from the start; which parts are built in Phase 1 is decided at the features step.
+
+## Product principles (decided 2026-11-20)
+
+### Settings: great defaults, two levels
+
+1. **Great defaults everywhere.** Most people never open settings; the app must work well without them.
+2. **Two levels:**
+   - **Settings:** what many people change: notifications, routine, study mode, theme, tracks.
+   - **Advanced:** tuning for people who care: the day-end time, the streak rest-day limit, the week start, the revision slider's default, suggestion behaviour.
+3. **A setting is added only when real users genuinely differ.** "We couldn't decide" is a reason to decide, not to add a setting: every setting multiplies the cases to build and test, and too many make the important ones impossible to find.
+4. **Switch off where it appears:** prompts carry "Don't ask again"; everything switched off can be switched back on in settings.
+5. **Search in settings**, so nothing is lost, even in Advanced.
 
 ## Notes so far
 
