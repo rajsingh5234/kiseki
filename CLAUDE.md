@@ -57,6 +57,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Apps use packages; apps never import each other.
 - Extensions import only `extension-sdk`, `contracts` and `ui`; never apps or other extensions. The host knows extensions only through their manifests.
 - API layers: route → controller → service → repository → database. Controllers never touch repositories; services own business rules and transactions; repositories only read and write their own module's tables.
+- Errors ([decision 009](docs/decisions/009-error-handling.md)): throw `AppError` for expected problems, with a kind (never an HTTP status), a stable UPPER_SNAKE `code` and a message safe to show; wrap a lower-level error as its `cause`. Never catch errors in controllers just to answer them: the global handler sends Problem Details, and anything that isn't an `AppError` becomes a generic 500 with the details only in the logs.
 - Modules talk to each other only through their public `index.ts` (or events); never through another module's repository or tables. Lint blocks `#modules/<name>/<anything>` except `#modules/<name>/index.ts` (`no-restricted-imports`).
 - Web and API share request/response types only through `packages/contracts`.
 - Only the entry point reads `process.env`; it passes it to `loadConfig()` once, and everything else receives the validated, frozen `config` ([decision 007](docs/decisions/007-api-foundation.md)). Lint: `node/no-process-env`.

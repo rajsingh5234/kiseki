@@ -2,6 +2,7 @@ import type { FastifyInstance } from "fastify";
 import { describe, expect, it, onTestFinished } from "vitest";
 
 import { testConfig } from "#core/config/app-config.fixture.ts";
+import { AppError } from "#core/errors/app-error.ts";
 import type { ApiModule } from "#core/http/api-module.ts";
 import { UUID } from "#core/http/request-id.fixture.ts";
 
@@ -71,19 +72,23 @@ describe("buildApp", () => {
          expect(response.headers["x-request-id"]).toMatch(UUID);
       });
 
-      it("keeps the request ID on a 404", async () => {
+      it("answers an unknown URL with a 404 problem", async () => {
          const app = setup();
 
          const response = await app.inject({ url: "/no-such-page" });
 
          expect(response.statusCode).toBe(404);
-         expect(response.headers["x-request-id"]).toMatch(UUID);
+         expect(response.headers["content-type"]).toMatch(/^application\/problem\+json/);
+         expect(response.json()).toMatchObject({
+            code: "ROUTE_NOT_FOUND",
+            requestId: response.headers["x-request-id"],
+         });
       });
 
-      it("keeps the request ID when a route fails", async () => {
+      it("hides a crashing route's details behind a generic 500 problem", async () => {
          const app = setup();
          app.get("/boom", () => {
-            throw new Error("boom");
+            throw new Error('duplicate key value violates unique constraint "users_email_key"');
          });
 
          const response = await app.inject({
@@ -92,7 +97,71 @@ describe("buildApp", () => {
          });
 
          expect(response.statusCode).toBe(500);
+         expect(response.headers["content-type"]).toMatch(/^application\/problem\+json/);
          expect(response.headers["x-request-id"]).toBe("trace-42");
+         expect(response.json()).toEqual({
+            type: "about:blank",
+            title: "Internal Server Error",
+            status: 500,
+            detail: "Something went wrong. Please try again.",
+            code: "INTERNAL_ERROR",
+            requestId: "trace-42",
+         });
+         expect(response.body).not.toContain("users_email_key");
+      });
+
+      it("answers an AppError with its own status, code and message", async () => {
+         const app = setup();
+         app.get("/target", () => {
+            throw new AppError({
+               kind: "not_found",
+               code: "TARGET_NOT_FOUND",
+               message: "Target not found",
+            });
+         });
+
+         const response = await app.inject({ url: "/target" });
+
+         expect(response.statusCode).toBe(404);
+         expect(response.json()).toMatchObject({
+            code: "TARGET_NOT_FOUND",
+            detail: "Target not found",
+         });
+      });
+
+      it("answers broken JSON with a 400 problem", async () => {
+         const app = setup();
+         app.post("/echo", () => ({ ok: true }));
+
+         const response = await app.inject({
+            method: "POST",
+            url: "/echo",
+            headers: { "content-type": "application/json" },
+            payload: "{not json",
+         });
+
+         expect(response.statusCode).toBe(400);
+         expect(response.json()).toMatchObject({ code: "BAD_REQUEST" });
+         expect(response.body).not.toContain("FST_");
+      });
+
+      it("handles errors thrown inside modules too", async () => {
+         const app = setup([
+            {
+               prefix: "/broken",
+               routes: (module, _options, done) => {
+                  module.get("/", () => {
+                     throw new Error("module bug");
+                  });
+                  done();
+               },
+            },
+         ]);
+
+         const response = await app.inject({ url: "/broken" });
+
+         expect(response.statusCode).toBe(500);
+         expect(response.json()).toMatchObject({ code: "INTERNAL_ERROR" });
       });
    });
 });

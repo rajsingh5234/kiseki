@@ -2,6 +2,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 
 import type { AppConfig } from "#core/config/app-config.ts";
 import type { ApiModule } from "#core/http/api-module.ts";
+import { errorHandler, notFoundHandler } from "#core/http/error-handler.ts";
 import { REQUEST_ID_HEADER, requestIdFrom } from "#core/http/request-id.ts";
 import { loggerOptions } from "#core/logger/logger-options.ts";
 
@@ -18,6 +19,9 @@ export function buildApp(config: AppConfig, modules: readonly ApiModule[]): Fast
       reply.header(REQUEST_ID_HEADER, request.id);
       done();
    });
+
+   app.setErrorHandler(errorHandler);
+   app.setNotFoundHandler(notFoundHandler);
 
    for (const module of modules) {
       app.register(module.routes, { prefix: module.prefix });
