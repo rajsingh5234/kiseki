@@ -177,12 +177,45 @@ Plans have levels: **target date → monthly milestones → weekly targets → d
 - **No target date** (e.g. learning a language): no backward planning; the user sets a pace ("3 lessons a week") and the app plans forward.
 - **Importing a schedule** (e.g. a coaching institute's monthly plan) is important for the product, but neither Phase 1 user needs it now: planned for later. The design is ready: an imported schedule simply becomes pinned monthly and weekly targets.
 
-### Finishing a study block (decided 2026-11-20)
+### Finishing a study block (decided 2026-11-20, refined the same day)
 
 About two taps, and it is all the app knows about how study is going:
 
 - **Done**, plus **how much** ("12 of 15 pages", "2 of 3 problems") and an optional note.
-- **How well**, one tap: UPSC "confident / unsure / weak"; DSA "solved alone / with hints / couldn't solve". Weak or failed items come back for revision sooner, strong ones later; this is how weak areas are found.
+- **Two different questions, weighed differently.** Right after studying, material feels clearer than it is (the "illusion of knowing"), so the real measure of strength is **recall later**:
+
+  | Moment                                             | Question (one tap)                                                         | Effect                                                                                                                                                                                                                                  |
+  | -------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | After studying something **new**                   | "How clear was it?" clear / partly / confused                              | A light signal. The first revision always comes within 1–2 days (the next day if partly or confused; "confused" is flagged and shown in the reason tag). Until then the topic is "studied, not yet revised", never green                |
+  | After **revising**                                 | "How much did you remember?" all / some / little                           | **The main signal for strength and the topic map.** All: strength up, the next gap grows (a few days → a week → a few weeks). Some: strength and gap stay. Little: strength down, back soon, gap starts small again (spaced repetition) |
+  | DSA: first attempt, then **re-solving days later** | solved alone / small hint / read the solution / couldn't solve (see below) | The first attempt is light; re-solving later is the main signal                                                                                                                                                                         |
+
+- **Wording avoids "confident"**, which invites the illusion; later, objective signals (e.g. quiz results from an extension) count more than self-ratings.
+- **A block can hold several items** (e.g. "revise ch. 3" and "new ch. 6"), about **2–3 per hour**, set by each item's size (starting estimates, then adjusted to the user's real pace):
+
+  | Size | Roughly        | In a 1-hour block                                                                            |
+  | ---- | -------------- | -------------------------------------------------------------------------------------------- |
+  | S    | ~20 min        | up to 3 small items                                                                          |
+  | M    | ~30–40 min     | 1–2 items                                                                                    |
+  | L    | 60 min or more | fills the block alone and **continues** in later blocks ("Ch. 6 DPSP, continued") until done |
+
+- **Revision first, then new:** recall warms up the subject and makes the new material easier to connect.
+- **Each item is ticked on its own** (✓, then its one question), while it's fresh. If only part of an item's amount was done, the user enters how much; the rest follows "Unfinished work".
+- **Catch-up:** when a block ends (or "End block" is tapped), unticked items appear in one quick list; if that's missed, they show up in the nightly review. Nothing is lost.
+- **"I studied something else":** each block lets the user record a different topic (found by search) and rate it as usual; the planned items that weren't done follow "Unfinished work". Without this, people stop recording real study, and every plan built on the data quietly goes wrong.
+- **Items never marked** (no tick, no catch-up, no review) are **"not recorded"**: neither done nor missed. The next review, or the next time the app is opened, asks **once**: "Did you study these?", with yes or no per item (pre-selected "yes" if study mode was on during that block). After **2 days** with no answer they count as not done and re-plan; the user can still correct that day later from their history.
+- **Not recording doesn't break the streak by itself:** a day with only unrecorded items isn't counted as missed until the 2 days pass; answering "yes, studied" in time counts the day. After that, the rest-day option still applies.
+- **DSA answers (four, not three):** solved alone / **small hint** / **read the solution** / couldn't solve. "Read the solution" is separated because writing code after reading a solution feels like solving but isn't (the illusion of knowing); it's the key interview-prep signal.
+
+  | Answer            | Next re-solve                                                                            |
+  | ----------------- | ---------------------------------------------------------------------------------------- |
+  | Solved alone      | in about a week                                                                          |
+  | Small hint        | in 3–4 days                                                                              |
+  | Read the solution | in 2–3 days, as a real re-solve without looking                                          |
+  | Couldn't solve    | the next day, with an easier related problem suggested first; the pattern is marked weak |
+
+- **Stricter "strong" for DSA:** a problem becomes strong only when **solved alone on a later re-solve**, not on the first attempt, because that's what an interview tests. Once strong, gaps keep growing while re-solves stay "solved alone". A pattern (e.g. Sliding window) is strong when most of its core problems are.
+- Neutral wording: reading a solution is a normal part of learning; the app just plans around it.
 - **Optional timer** for those who like it; without it, the planned time counts.
 - These are built-in study fields (the planning and revision engine needs them), separate from custom trackers.
 
