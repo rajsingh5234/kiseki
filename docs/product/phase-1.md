@@ -381,6 +381,8 @@ Only decisions that are hard to change later.
 
 ### Sign-in (decided 2026-11-21)
 
+Full record, with alternatives and sources: [decision 010](../decisions/010-sign-in-and-sessions.md).
+
 - **Sign in with Google**, for everyone in Phase 1 (all agreed). Only basic sign-in information (name, email): Google calls this non-sensitive, so no app review is needed. Phase 1 runs in Google's **testing mode**; public launch needs Google's lighter **brand verification** (a homepage and privacy policy on our own domain), which launch needs anyway.
 - **Passkeys** (fingerprint or face) at public launch, for faster sign-in without Google.
 - **Invite-only:** only invited emails can sign in. The invite list lives in the **database** (never in the public repo), managed with a small command (no admin app). Anyone else sees "Kiseki is invite-only for now", and no account is created.
@@ -393,6 +395,8 @@ Only decisions that are hard to change later.
 
 ### Installable app and offline (decided 2026-11-21)
 
+Full record, with alternatives: [decision 011](../decisions/011-offline-and-local-first-readiness.md).
+
 - **Installable** (home-screen icon, opens full-screen), using the same browser technology (a service worker) that notifications need.
 - **The daily loop works offline:** Today and tomorrow (and the syllabus) are kept on the device; ticks, ratings and "how much" are saved on the device at once and sent automatically when the connection returns, with a calm "3 changes waiting to sync" indicator, never an error. The same design makes flaky connections safe: a retry can never create a duplicate. Editing the routine or syllabus needs internet in v0.1, and those screens say so clearly.
 - **Each event records two times:** when it happened on the device (which decides its study day, in the user's time zone with the 4 am rule) and when the server received it.
@@ -403,6 +407,8 @@ Only decisions that are hard to change later.
 - **Move to local-first later** when Phase 1 shows users are often offline or want to edit offline, when speed becomes a competitive edge, or before a public launch with users on patchy internet. The first UPSC user is rarely offline, so Phase 1 doesn't need it.
 
 ### Notifications machinery (decided 2026-11-21)
+
+Full record, with alternatives and sources: [decision 012](../decisions/012-notifications-machinery.md).
 
 Researched approach: a durable schedule in the database, a regular sweep, and an outbox, so a notification is never lost and never sent twice.
 
@@ -417,6 +423,8 @@ Researched approach: a durable schedule in the database, a regular sweep, and an
 - **Platforms:** Android works fully; iPhones need iOS 16.4+ with the app on the home screen (Chrome on iPhone has no push), which doesn't affect Phase 1 users.
 
 ### Data model: the concept (decided 2026-11-21)
+
+Full record, with alternatives and sources: [decision 013](../decisions/013-data-model-concept.md).
 
 The main things stored and the rules between them. Tables and columns are designed feature by feature during development.
 
