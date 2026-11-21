@@ -521,7 +521,7 @@ She picked three published designs as references (inspiration only; Kiseki's scr
 - **Automatic, but automatically checked:** every new surface style, effect or theme runs the playground screenshot and contrast checks across all combinations; a failing combination is hidden from Settings until fixed.
 - **Who wins:** phone settings (reduce motion, reduce transparency, battery saver) → the user's own choices → the theme's defaults. A slow phone, battery saver or "reduce transparency" turns any surface style into flat.
 - **Standalone units in `packages/ui`:** `tokens/` (the shared names: the only thing the others depend on), `themes/<family>/` (colours only, as data: safe, and shaped like a future theme extension), `surfaces/<style>/` and `effects/<effect>/` (recipes, as code: ours or reviewed extensions only), an `engine/` that combines theme, surface style, effects, user choices and phone settings, and `components/` that use only the tokens. Themes, surfaces and effects are found automatically from their folders, so adding or removing one is adding or deleting its folder.
-- The theme system's architecture (how themes, surfaces and effects plug together) gets its own decision file when it is designed in detail.
+- The theme system's architecture (how themes, surfaces and effects plug together), with the motion engine: [decision 014](../decisions/014-theme-system-and-motion-engine.md).
 
 ### Effects (decided 2026-11-21)
 
