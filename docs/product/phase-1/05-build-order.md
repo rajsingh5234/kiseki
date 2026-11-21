@@ -17,7 +17,7 @@
 5. **Hosting + automatic deployment:** every merge to `main` goes live.
 6. **Sign-in**, plus **one automated end-to-end test** in a real browser.
    → **Walking skeleton done:** sign in on an Android phone, deployed and tested automatically.
-7. **Design system**, before the feature slices (every slice needs these components): **clay**, **glass** behind the developer switch, the **v0.1 effects**, the **motion engine** on Motion (with the 144 Hz smoothness test), and the **playground** with automatic screenshot and contrast checks. See [themes, effects and motion](../../design/themes-effects-motion.md).
+7. **Design system**, before the feature slices (every slice needs these components): **clay**, **glass** behind the developer switch, the **v0.1 effects**, the **motion engine** on Motion (with the 144 Hz smoothness test), the **playground** with automatic screenshot and contrast checks, and the **appearance settings** (v0.1 feature 12). See [themes, effects and motion](../../design/themes-effects-motion.md).
 8. **Feature slices** for v0.1, with design one slice ahead (below).
 
 ## Feature slices (decided 2026-11-21)
