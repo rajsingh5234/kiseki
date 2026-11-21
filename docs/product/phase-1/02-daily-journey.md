@@ -166,6 +166,7 @@ About two taps, and it is all the app knows about how study is going:
 - **Changing it later:** tapping a ticked item reopens the sheet in edit mode with what was saved: change the answer, amount or note, or "Mark as not done". A plain re-tap never unticks silently.
 - **Only part done:** a stepper (`− 12 +` "of 15 pages", tap the number to type) starting at the full amount; time in 10-minute steps; not shown for done / not-done items. The question is still asked about the part done; the rest becomes a new unfinished piece ("Directive Principles, pages 13–15"). On the card, the item shows a partly filled circle and "12 of 15".
 - **Notes:** plain text (voice typing comes from the phone's keyboard), saved with the answer, and shown again when the topic comes up for revision ("Your note: …") and on the topic in Syllabus. Photo notes are a v0.2 candidate.
+- **Motion (quiet, since this happens 10+ times a day):** the tick draws in (about 120 ms); the sheet rises from the bottom with a soft spring (about 250 ms) and closes faster (about 150 ms); after an answer, the card's progress ring sweeps forward and the message fades in. No pop or bounce: that's kept for earned milestones (the whole day done). With reduce motion on, everything is a simple fade. All of it runs through the motion engine ([themes, effects and motion](../../design/themes-effects-motion.md)).
 
 ## Study mode and phone distractions (decided 2026-11-20)
 
