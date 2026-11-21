@@ -2,7 +2,7 @@
 
 Phase 1 includes the foundation: the base every later feature stands on, so future features plug in without changing the app. There is no separate Phase 0.
 
-Status: notes, not yet a plan. In Phase 1 planning we discuss everything in the right order: goal, core journey, features, what must be built now so future features are easy to add, build order and non-goals.
+Status: plan agreed (2026-11-21): goal, core journey, features and non-goals, foundation decisions and build order. Details marked "decide when building" are settled per feature.
 
 ## Goal (agreed 2026-11-20)
 
@@ -449,6 +449,47 @@ The main things stored and the rules between them. Tables and columns are design
 5. **Deletion is designed in:** everything a user owns links back to them, so **deleting an account removes all of it**, events included (the one exception to "events are never changed"). Soft delete with a 30-day undo only where undo matters (e.g. a deleted custom topic), then real erasure; a "deleted" flag alone isn't erasure. **No personal data in logs** beyond IDs.
 6. **Privacy law:** India's DPDP Act (main duties from about May 2027, 72-hour breach reporting) applies at public launch; rule 5 is what it needs. Users under 18 need verifiable parental consent: not an issue for Phase 1 (all users are adults), but a public launch item.
 7. **Not in v0.1:** organisations or multi-tenancy, a full audit log of every change (study events already give history), data export.
+
+## Build order (topic 5, in progress)
+
+### How we build (decided 2026-11-21)
+
+- **Feature by feature ("vertical slices")**, not layer by layer: each feature is built through every layer (database → API → screen) before the next starts, so something works from the first slice and problems show up early.
+- **First, a walking skeleton:** the thinnest slice of real functionality that is **built, deployed and tested end-to-end automatically**. It's production code, not a prototype. Ours: open the URL on an Android phone → "Sign in with Google" (invite-only) → a plain "Hello" screen → install it to the home screen.
+- **Hosting moves near the start** (not a late "deploy step"): hosting problems are cheapest to find in the first week.
+- **Design runs one step ahead of building ("dual-track"):** the design session (the UI discussion) happens **right after planning**, before and alongside the setup steps, and must be done before the first feature slice; then while slice N is built, slice N+1 is designed. Same people, not a separate phase. Starting design first also lets the web skeleton's neutral tokens follow the agreed design direction.
+
+### Order (decided 2026-11-21)
+
+0. **Design session (the UI discussion), right after planning:** design direction, the UPSC user's 3 themes, key screens (Today, finishing an item, syllabus, routine), every screen size, motion. It can run alongside steps 1–6 and must be done before the feature slices.
+1. **CI:** minimal first (install, lint, typecheck, test, audit on every push), proven reliable before automatic deployment.
+2. **Postgres + Drizzle**, including the row-level security decision.
+3. **`packages/contracts`:** shared request and response types.
+4. **The web app skeleton:** React + React Router, installable basics, **neutral design tokens** (colour roles, spacing, type scale; brand colours and themes come later).
+5. **Hosting + automatic deployment:** every merge to `main` goes live.
+6. **Sign-in**, plus **one automated end-to-end test** in a real browser.
+   → **Walking skeleton done:** sign in on an Android phone, deployed and tested automatically.
+7. **Feature slices** for v0.1, with design one slice ahead (below).
+
+### Feature slices (decided 2026-11-21)
+
+Ordered by dependencies, by daily usefulness as early as possible (dogfooding starts at slice 4), and with the riskiest part (the engine) built while the app is in daily use, so it's tested on real data at once.
+
+| #   | Slice                                                                                                                 | After it, the DSA user can…                            |
+| --- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 1   | Tracks: pick a track (DSA first), set the target date, view the syllabus                                              | see their syllabus                                     |
+| 2   | Weekly routine: study and personal blocks per day                                                                     | set when they study                                    |
+| 3   | Today, first version: blocks filled with the next topics; the day plan stays stable                                   | see what to do today                                   |
+| 4   | Finishing items: tick + one question + how much, catch-up, "studied something else", saved as events, working offline | **use Kiseki daily (dogfooding starts)**               |
+| 5   | The revision engine: spaced repetition, revision first in each block, reason tags                                     | get revision scheduled automatically                   |
+| 6   | Re-planning: unfinished work moves to future days                                                                     | miss a day without breaking the plan                   |
+| 7   | Simple progress: topic map (strength) + streak                                                                        | see where they stand                                   |
+| 8   | Notifications: session nudges, basic study mode, DND-off reminder                                                     | get nudged to start                                    |
+| 9   | Basic syllabus edits: hide, rename, add a topic, add a deeper level                                                   | shape the syllabus (needed before the UPSC user joins) |
+
+Then the "stable" checklist (see "Who uses v0.1 first"), and the UPSC user joins. Offline is part of slice 4, not a separate slice: the event design is offline-ready from the start (decision 011).
+
+**Sources:** Freeman & Pryce, _Growing Object-Oriented Software, Guided by Tests_ ([ch. 10, the walking skeleton](https://www.oreilly.com/library/view/growing-object-oriented-software/9780321574442/ch10.html)); J. Patton, [dual-track development](https://jpattonassociates.com/dual-track-development/); thoughtbot, [a lean approach to design systems](https://thoughtbot.com/blog/a-lean-approach-to-design-systems); DEV, [add CI when the project can boot](https://dev.to/oranguengineer/add-ci-when-the-project-can-boot-not-when-it-feels-finished-20m9).
 
 ## Product principles (decided 2026-11-20)
 
