@@ -25,7 +25,7 @@
 - Foundation decided: [docs/decisions/001-foundation.md](docs/decisions/001-foundation.md) (stack, architecture and the reasons).
 - Done: tooling, and the API base (config, logging, request IDs, health module, composition root, graceful shutdown, error handling; decisions [007](docs/decisions/007-api-foundation.md) and [009](docs/decisions/009-error-handling.md)).
 - Phase 1 plan agreed: [docs/product/phase-1/](docs/product/phase-1/README.md) (goal, core journey, v0.1 features and non-goals, foundation decisions [010](docs/decisions/010-sign-in-and-sessions.md)–[013](docs/decisions/013-data-model-concept.md), build order).
-- Next: the design session (UI discussion: design direction, the UPSC user's 3 themes, key screens, every screen size, motion), then the setup steps (CI → Postgres + Drizzle → contracts → web skeleton → hosting and automatic deploy → sign-in) that make the walking skeleton, then the v0.1 feature slices, as listed in the plan's "Build order".
+- Next: the design session (UI discussion: design direction, the UPSC user's 3 themes, key screens, every screen size, motion), then the setup steps (CI → Postgres + Drizzle → contracts → web skeleton → hosting and automatic deploy → sign-in) that make the walking skeleton (with the real Lavender theme), then the design system (clay, glass, effects, motion engine, playground), then the v0.1 feature slices, as listed in the plan's "Build order".
 
 ## Folder structure (target)
 

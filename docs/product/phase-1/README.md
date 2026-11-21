@@ -31,5 +31,5 @@ Each lives in one place, its decision record (with alternatives and sources):
 
 ## Elsewhere
 
-- **Design** (references, themes, effects, motion): [docs/design/](../../design/)
+- **Design** (references, personality and voice, typography, illustrations, themes, effects, motion): [docs/design/](../../design/)
 - **Product-wide:** [principles](../principles.md); vision: [extension host](../vision/extension-host.md), [change and releases](../vision/change-and-releases.md)

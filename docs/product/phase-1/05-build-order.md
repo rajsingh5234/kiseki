@@ -5,19 +5,20 @@
 - **Feature by feature ("vertical slices")**, not layer by layer: each feature is built through every layer (database → API → screen) before the next starts, so something works from the first slice and problems show up early.
 - **First, a walking skeleton:** the thinnest slice of real functionality that is **built, deployed and tested end-to-end automatically**. It's production code, not a prototype. Ours: open the URL on an Android phone → "Sign in with Google" (invite-only) → a plain "Hello" screen → install it to the home screen.
 - **Hosting moves near the start** (not a late "deploy step"): hosting problems are cheapest to find in the first week.
-- **Design runs one step ahead of building ("dual-track"):** the design session (the UI discussion) happens **right after planning**, before and alongside the setup steps, and must be done before the first feature slice; then while slice N is built, slice N+1 is designed. Same people, not a separate phase. Starting design first also lets the web skeleton's neutral tokens follow the agreed design direction.
+- **Design runs one step ahead of building ("dual-track"):** the design session (the UI discussion) happens **right after planning**, before and alongside the setup steps, and must be done before the first feature slice; then while slice N is built, slice N+1 is designed. Same people, not a separate phase. Finishing the design discussion first lets the walking skeleton use the real theme (step 4).
 
 ## Order (decided 2026-11-21)
 
-0. **Design session (the UI discussion), right after planning:** design direction, the UPSC user's 3 themes, key screens (Today, finishing an item, syllabus, routine), every screen size, motion. It can run alongside steps 1–6 and must be done before the feature slices.
+0. **Design session (the UI discussion), right after planning:** design direction, the UPSC user's 3 themes, key screens (Today, finishing an item, syllabus, routine), every screen size, motion. All discussions are finished before building starts.
 1. **CI:** minimal first (install, lint, typecheck, test, audit on every push), proven reliable before automatic deployment.
 2. **Postgres + Drizzle**, including the row-level security decision.
 3. **`packages/contracts`:** shared request and response types.
-4. **The web app skeleton:** React + React Router, installable basics, **neutral design tokens** (colour roles, spacing, type scale; brand colours and themes come later).
+4. **The web app skeleton:** React + React Router, installable basics, and the **minimum real theme**: the token contract, **Lavender light and dark**, **follow the system**, and the **flat** surface style. Enough to catch problems that only appear live, such as a white "theme flash" before dark mode loads on a phone; clay, glass, effects and the motion engine come in step 7.
 5. **Hosting + automatic deployment:** every merge to `main` goes live.
 6. **Sign-in**, plus **one automated end-to-end test** in a real browser.
    → **Walking skeleton done:** sign in on an Android phone, deployed and tested automatically.
-7. **Feature slices** for v0.1, with design one slice ahead (below).
+7. **Design system**, before the feature slices (every slice needs these components): **clay**, **glass** behind the developer switch, the **v0.1 effects**, the **motion engine** on Motion (with the 144 Hz smoothness test), and the **playground** with automatic screenshot and contrast checks. See [themes, effects and motion](../../design/themes-effects-motion.md).
+8. **Feature slices** for v0.1, with design one slice ahead (below).
 
 ## Feature slices (decided 2026-11-21)
 
