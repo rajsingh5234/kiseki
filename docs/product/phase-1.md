@@ -375,6 +375,47 @@ Things Phase 1 deliberately won't do, written down so they don't creep in and de
 | Languages other than English                                             | Both users are comfortable in English; translation covers every screen, message and the whole syllabus |
 | An admin app, video notes, gRPC between services, third-party extensions | Already marked as future phases                                                                        |
 
+## Foundation decisions (topic 4, in progress)
+
+Only decisions that are hard to change later.
+
+### Sign-in (decided 2026-11-21)
+
+- **Sign in with Google**, for everyone in Phase 1 (all agreed). Only basic sign-in information (name, email): Google calls this non-sensitive, so no app review is needed. Phase 1 runs in Google's **testing mode**; public launch needs Google's lighter **brand verification** (a homepage and privacy policy on our own domain), which launch needs anyway.
+- **Passkeys** (fingerprint or face) at public launch, for faster sign-in without Google.
+- **Invite-only:** only invited emails can sign in. The invite list lives in the **database** (never in the public repo), managed with a small command (no admin app). Anyone else sees "Kiseki is invite-only for now", and no account is created.
+- **Identity is Google's permanent account ID**, not the email (emails can change); the email is kept for contact and invites.
+- **One user, several sign-in methods:** a person and their sign-in methods are stored separately, so passkeys are added later without a rebuild.
+- **Server-side sessions for user login, not JWTs:** the session lives in our database; the browser holds only a random ID in a **secure, HTTP-only cookie**. Signing out deletes the session, so **"sign out of this device"** and **"sign out everywhere"** take effect immediately. (JWTs can't be revoked before they expire, which is why security guidance such as OWASP recommends server-side sessions for browser login.) Sessions last about **90 days per device**, renewed with use. Only a **hash** of the session token is stored, so a leaked database can't be used to log in. **CSRF protection:** SameSite cookies plus checking that changing requests come from our own site.
+- **Where JWTs fit (later):** verifying claims **between servers** (e.g. services split out in future phases), as **short-lived** tokens (minutes), never as the user's login session.
+- **Only name and email** are stored from Google (picture optional), nothing more.
+- **Which library or service** builds this is agreed at the sign-in build step.
+
+### Installable app and offline (decided 2026-11-21)
+
+- **Installable** (home-screen icon, opens full-screen), using the same browser technology (a service worker) that notifications need.
+- **The daily loop works offline:** Today and tomorrow (and the syllabus) are kept on the device; ticks, ratings and "how much" are saved on the device at once and sent automatically when the connection returns, with a calm "3 changes waiting to sync" indicator, never an error. The same design makes flaky connections safe: a retry can never create a duplicate. Editing the routine or syllabus needs internet in v0.1, and those screens say so clearly.
+- **Each event records two times:** when it happened on the device (which decides its study day, in the user's time zone with the 4 am rule) and when the server received it.
+- **Built "D-ready" for a later local-first app** (everything offline, instant everywhere):
+  1. **IDs are created on the device** when an item is created, not by the server;
+  2. **study actions are stored as events** that are only ever added, never edited in place, so they can't conflict and give a complete history (strength, streaks and progress are calculated from them);
+  3. **the planning and revision engine is plain shared code** (pure functions in a shared package), not locked inside the API server, so it can later also run on the device.
+- **Move to local-first later** when Phase 1 shows users are often offline or want to edit offline, when speed becomes a competitive edge, or before a public launch with users on patchy internet. The first UPSC user is rarely offline, so Phase 1 doesn't need it.
+
+### Notifications machinery (decided 2026-11-21)
+
+Researched approach: a durable schedule in the database, a regular sweep, and an outbox, so a notification is never lost and never sent twice.
+
+- **Delivery:** the browser **Web Push** standard (works for the installed app on Android and desktop), behind our own interface so a service like Firebase could replace it without touching anything else. Each notification opens the exact screen it's about.
+- **The routine is the intent:** nothing is pre-scheduled; routine edits apply automatically.
+- **A sweep every minute** (a cron job in a Postgres-based queue, which runs once even with several servers) finds study sessions starting now in **each user's own time zone**. Users' time zones are stored by full name (e.g. `Asia/Kolkata`), never as a bare hour, with defined behaviour when clocks change.
+- **One record per occurrence**, with a uniqueness rule (user + session + date): an overlapping or repeated sweep can't create a second one.
+- **Outbox:** the record and its delivery job are written in **one transaction**, so nothing is lost between deciding and queueing.
+- **The delivery worker** sends, retries on failure, marks "sent" only after success, and removes a device's subscription when the browser reports it gone.
+- **Catch-up window:** if sending was delayed (e.g. the worker was down), a nudge is still sent up to **10 minutes late**, otherwise skipped: a late "start studying" nudge is noise.
+- **Likely tool:** pg-boss (Postgres only, no Redis; cron and adding jobs in the same transaction), confirmed at the build step. Redis-based queues (BullMQ) aren't needed at our volume.
+- **Platforms:** Android works fully; iPhones need iOS 16.4+ with the app on the home screen (Chrome on iPhone has no push), which doesn't affect Phase 1 users.
+
 ## Product principles (decided 2026-11-20)
 
 ### Settings: great defaults, two levels
