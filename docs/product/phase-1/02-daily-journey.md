@@ -157,6 +157,16 @@ About two taps, and it is all the app knows about how study is going:
 - **Optional timer** for those who like it; without it, the planned time counts.
 - These are built-in study fields (the planning and revision engine needs them), separate from custom trackers.
 
+## Ticking an item: the finish sheet (decided 2026-11-21)
+
+- **A bottom sheet:** tapping an item's tick fills it and slides up a short sheet with the item's one question and three big answer buttons; "Only part done?" and "Add a note" sit below as small links. The same sheet is used on Today, in study mode and in the end-of-block catch-up. Amount and note stay one tap away, never shown by default (this happens 10+ times a day).
+- **Answering saves and closes:** an answer saves the answer, amount and note together; there is no Save button.
+- **Closing without answering keeps the item done:** the answer is stored as "not answered" (never a made-up value), and planning uses a safe middle until then (new: "partly", so it comes back the next day; revision: "some", the gap stays). It's asked once more later, optionally: in v0.1 as a small dismissible card at the top of Today the next time the app is opened ("1 quick question from yesterday"); with the nightly review (v0.2), there.
+- **Undo:** a quiet message ("Done. Fundamental Rights is in your revision plan.") with **Undo** stays about 6 seconds, pauses while touched or focused by a screen reader, and sits above the bottom bar. Undo reverses the tick, answer, amount and note, and restores the revision plan.
+- **Changing it later:** tapping a ticked item reopens the sheet in edit mode with what was saved: change the answer, amount or note, or "Mark as not done". A plain re-tap never unticks silently.
+- **Only part done:** a stepper (`− 12 +` "of 15 pages", tap the number to type) starting at the full amount; time in 10-minute steps; not shown for done / not-done items. The question is still asked about the part done; the rest becomes a new unfinished piece ("Directive Principles, pages 13–15"). On the card, the item shows a partly filled circle and "12 of 15".
+- **Notes:** plain text (voice typing comes from the phone's keyboard), saved with the answer, and shown again when the topic comes up for revision ("Your note: …") and on the topic in Syllabus. Photo notes are a v0.2 candidate.
+
 ## Study mode and phone distractions (decided 2026-11-20)
 
 The UPSC user asked for the app to block phone notifications while studying. A web app can't: phones don't let web apps change Do Not Disturb or block other apps. So, for her Android phone:
