@@ -9,6 +9,9 @@ dist/
 # Test reports
 coverage/
 
+# Browser-automation output (screenshots and logs from design checks)
+.playwright-mcp/
+
 # Secrets: never commit real env files; the example file is shared
 .env
 .env.*
