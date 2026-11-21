@@ -416,6 +416,32 @@ Researched approach: a durable schedule in the database, a regular sweep, and an
 - **Likely tool:** pg-boss (Postgres only, no Redis; cron and adding jobs in the same transaction), confirmed at the build step. Redis-based queues (BullMQ) aren't needed at our volume.
 - **Platforms:** Android works fully; iPhones need iOS 16.4+ with the app on the home screen (Chrome on iPhone has no push), which doesn't affect Phase 1 users.
 
+### Data model: the concept (decided 2026-11-21)
+
+The main things stored and the rules between them. Tables and columns are designed feature by feature during development.
+
+| Group                                                   | Things                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **People and access**                                   | **User** (time zone, day-end hour, week start, settings) · **Sign-in method** (Google now, passkey later; several per user) · **Session** (one signed-in device; only a token hash) · **Invite**                                                                                                    |
+| **Shared content** (from data files, same for everyone) | **Track template** (version, stages) · **Template topic** (subject → topic or DSA problem; permanent ID, labels, resources)                                                                                                                                                                         |
+| **Each user's layer**                                   | **Enrolment** (the user follows a track: target date, stage, revision slider) · **Topic change** (the user's change to a template topic, or a topic they added)                                                                                                                                     |
+| **Planning**                                            | **Routine** (weekly blocks: study or personal) · **Day change** (light day, day off, copied routine, marked in advance) · **Day plan** (the fixed plan for one study day; stored once fixed, so it stays stable)                                                                                    |
+| **Study history**                                       | **Study event** (everything done: ticks, how much, ratings, "studied something else", "not recorded" answers, study mode; only ever added; device-created ID and two times) · **Topic state** (strength, next revision date; calculated from events and rebuildable: a saved result, not the truth) |
+| **Notifications**                                       | **Push subscription** (a device that can receive) · **Notification occurrence** (one per user + session + date, with status)                                                                                                                                                                        |
+| **Security record**                                     | **Sign-in and session events** (for "your devices" and security), nothing more for now                                                                                                                                                                                                              |
+
+**Designed, not in v0.1:** weekly and monthly targets, custom trackers and entries, dashboard layouts, flashcards, custom tracks (a template owned by a user), installed extensions and themes, **roles**.
+
+**Rules:**
+
+1. **Events are the truth** for study history; strength, streaks and progress are calculated from them. The day plan is stored on purpose (stability).
+2. **IDs are UUIDv7**, created on the device when an item is created (offline-safe, time-ordered so indexes stay fast; built into Postgres 18). An ID is never a security check.
+3. **All times are stored in UTC with the time zone**; changeable things record when they were created and last updated.
+4. **Every user-owned thing has exactly one owner**, and all access goes through **one authorization layer**: in v0.1 the only rule is "is this yours?". Checks name **actions** (`can(user, "publish-track")`), never roles, so roles (admin, author, support) and relationships (a coach seeing a student) plug in later. Tests try to read other users' data. Row-level security in Postgres as a second safety net is decided at the database setup step. Extension permissions stay a separate system.
+5. **Deletion is designed in:** everything a user owns links back to them, so **deleting an account removes all of it**, events included (the one exception to "events are never changed"). Soft delete with a 30-day undo only where undo matters (e.g. a deleted custom topic), then real erasure; a "deleted" flag alone isn't erasure. **No personal data in logs** beyond IDs.
+6. **Privacy law:** India's DPDP Act (main duties from about May 2027, 72-hour breach reporting) applies at public launch; rule 5 is what it needs. Users under 18 need verifiable parental consent: not an issue for Phase 1 (all users are adults), but a public launch item.
+7. **Not in v0.1:** organisations or multi-tenancy, a full audit log of every change (study events already give history), data export.
+
 ## Product principles (decided 2026-11-20)
 
 ### Settings: great defaults, two levels
