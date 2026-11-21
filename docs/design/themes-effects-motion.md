@@ -1,0 +1,49 @@
+# Themes, effects and motion
+
+## Themes (decided 2026-11-21)
+
+- **Light and dark pairs:** each theme family has a light and a dark version. Appearance: **Follow system** (default), Always light, Always dark.
+- **A theme picker on first launch**, right after sign-in: one screen, live mini-previews of the Today screen in each theme, one pre-selected, "change any time" (full options in Settings).
+- **v0.1 ships one family: Lavender** (light and dark, following the system). The picker and the other families (Bright, Forest) come next; the theme system is built in v0.1, so new families are mostly new token sets.
+- **A theme is a combination of swappable parts:** colours (a token set) + a **surface style** + an **aesthetic** + **effects** (motion, depth). **Layout** (e.g. a bento grid for the dashboard) is separate and works with every theme. A new surface style or effect works with every theme without changing components.
+
+| Kind             | Picks                                                                                                                                                                                                                                          | Not used                                                                                                                               |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Surface style    | **Flat (soft flat): the default and the fallback for every theme**; glass (falls back to flat when the phone is slow or "reduce transparency" is on); clay; brutalism (the high-contrast option). Later: liquid glass (heavy on budget phones) | Neumorphism (accessibility: low contrast, unclear buttons); skeuomorphism (dated, heavy), except perhaps a "paper planner" theme later |
+| Aesthetic        | **Minimalism (the base)**; brutalism                                                                                                                                                                                                           | Maximalism (fights focus)                                                                                                              |
+| Layout           | Bento grid for the card dashboard                                                                                                                                                                                                              | —                                                                                                                                      |
+| Depth and motion | Spatial UI later, as subtle depth and parallax effects (real spatial UI is for headsets)                                                                                                                                                       | —                                                                                                                                      |
+
+- **v0.1:** Lavender with **soft flat surfaces and a minimal aesthetic**, her favourite combination.
+- **v0.1 surface styles:** **flat** (Lavender's default) and **clay** (its closest sibling: the same pastels with soft 3D depth; extra care in dark mode), both selectable in Settings along with individual effects. **Glass** is built behind a developer switch (with a soft gradient background, since plain off-white gives it nothing to blur) to prove the theme system with its hardest style. Brutalism follows in v0.2.
+- **New styles and effects work with every theme automatically:** a theme holds **colours only**; a surface style is a **recipe** that works out its look (shadows, depth, rounding, blur, backdrop) from any theme's colours; components only ask for "my surface". A new surface style or effect is one new recipe that works with every theme, and a new theme is one new colour set that works with every surface style. Recipes work things out by default; a theme may override a value where hand-tuning is needed.
+- **Automatic, but automatically checked:** every new surface style, effect or theme runs the playground screenshot and contrast checks across all combinations; a failing combination is hidden from Settings until fixed.
+- **Who wins:** phone settings (reduce motion, reduce transparency, battery saver) → the user's own choices → the theme's defaults. A slow phone, battery saver or "reduce transparency" turns any surface style into flat.
+- **Standalone units in `packages/ui`:** `tokens/` (the shared names: the only thing the others depend on), `themes/<family>/` (colours only, as data: safe, and shaped like a future theme extension), `surfaces/<style>/` and `effects/<effect>/` (recipes, as code: ours or reviewed extensions only), an `engine/` that combines theme, surface style, effects, user choices and phone settings, and `components/` that use only the tokens. Themes, surfaces and effects are found automatically from their folders, so adding or removing one is adding or deleting its folder.
+- The theme system's architecture (how themes, surfaces and effects plug together), with the motion engine: [decision 014](../decisions/014-theme-system-and-motion-engine.md).
+
+## Effects (decided 2026-11-21)
+
+- **v0.1:** glow on touch and swipe; **springs** on drag and drop, sheets, cards and things that react to scrolling (a header that shrinks), **never on scrolling itself** (taking over native scrolling feels wrong, drops frames and breaks accessibility tools); **haptics** (a soft tick on "done", Chrome on Android); **screen transitions** (a tapped card grows into its screen); **progress animation** (bars fill, numbers count up); **celebration**, rarely (the whole day's plan done, streak milestones).
+- **Later:** skeleton loading, depth and parallax, an ambient background (off by default), sound (opt-in).
+- **Several effects per theme:** the theme sets the defaults and intensity; the user can switch individual effects on or off (in Advanced), and those choices apply across themes.
+- **Rules:** animate only cheap properties (position, scale, transparency); with reduce motion, motion becomes a quick fade or instant change and nothing is lost; an effect is never the only signal; battery saver or a slow phone scales effects down.
+
+## Motion engine (decided 2026-11-21)
+
+Phone systems like ColorOS and OxygenOS have rendering engines that run animations in parallel and interruptibly; a web app can't replace the browser's drawing, but it can **orchestrate** animations so the browser's compositor and GPU do the work off the main thread.
+
+- **Kiseki's motion engine** lives in `packages/ui/src/motion/` and conducts all animations: compositor-only properties; parallel and **interruptible** animations (a tap mid-animation redirects it, keeping its speed); one shared clock in step with the screen (up to 144 Hz); no layout thrashing; **device tiers** (power, refresh rate, battery saver, reduce motion) that scale effects; **self-correcting** (it watches for dropped frames and turns effects down); heavy work (re-planning) in a background worker.
+- **Built on Motion** (formerly Framer Motion), **behind our own interface**: its hybrid engine runs animations hardware-accelerated through the browser's own animation engine wherever possible, with springs, drag, interruption and reduce-motion support built in; small and MIT-licensed. Kiseki owns the rules (tiers, self-correction, effects, interruption); Motion does the physics and can be swapped without touching effects or screens. A smoothness test on the UPSC user's phone at 144 Hz confirms it at the build step.
+- **Not chosen:** GSAP (no real springs, works outside React, and its license forbids tools that let people build visual animations without code, which Webflow can change at any time: a risk for future theme and effect tools); React Spring (runs every frame in JavaScript on the main thread, against the compositor-first rule).
+- **Test device:** the UPSC user's phone has a 144 Hz screen, where any dropped frame is visible, so it's the main smoothness test, while effects stay designed for weaker phones.
+
+## Installable themes
+
+**Goal:** in the future, users can install themes (ours, later outside ones) and use them, like VS Code themes. So from the start:
+
+- **A theme is a kind of extension:** its manifest contributes to a `themes` slot. Our built-in themes use the same path, with no special case.
+- **A theme is data, not code:** a token set (colours, radius, shadows, motion…) in a file, checked against a schema before use. A theme that only holds data can't break the app or read user data, so outside themes are safe.
+- **Missing tokens fall back** to the default theme, so an older theme keeps working when we add new tokens.
+- **Contrast check:** a theme must pass text-contrast rules to be accepted.
+- **Installed themes** appear in the user's theme settings; uninstalling one switches the user back to the default.

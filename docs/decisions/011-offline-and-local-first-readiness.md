@@ -2,7 +2,7 @@
 
 - **Date:** 2026-11-21
 - **Status:** Accepted
-- **Summary in:** [docs/product/phase-1.md](../product/phase-1.md) ("Installable app and offline")
+- **Listed in:** [Phase 1 plan](../product/phase-1/README.md) (Foundation decisions)
 
 ## Context
 

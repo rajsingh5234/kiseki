@@ -2,7 +2,7 @@
 
 - **Date:** 2026-11-21
 - **Status:** Accepted
-- **Summary in:** [docs/product/phase-1.md](../product/phase-1.md) ("Notifications machinery"; what each notification says is in "Study mode and phone distractions")
+- **Listed in:** [Phase 1 plan](../product/phase-1/README.md) (Foundation decisions); what each notification says is in [the daily journey](../product/phase-1/02-daily-journey.md) ("Study mode and phone distractions")
 
 ## Context
 

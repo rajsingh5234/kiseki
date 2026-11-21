@@ -3,7 +3,7 @@
 - **Date:** 2026-11-21
 - **Status:** Accepted
 - **Extends:** decision 001 (styling with design tokens, themes under `[data-theme]`, an effects registry)
-- **Summary in:** [docs/product/phase-1.md](../product/phase-1.md) ("Themes", "Effects", "Motion engine")
+- **Summary in:** [docs/design/themes-effects-motion.md](../design/themes-effects-motion.md)
 
 ## Context
 
