@@ -112,3 +112,7 @@ Kiseki's own motion rules live in [themes, effects and motion](../../../docs/des
 - **Reduced motion always wins:** phone settings beat user choices, which beat theme defaults. Motion becomes a quick fade or an instant change, and nothing important is lost.
 - **Touch targets are at least 48px** with 8px spacing (CLAUDE.md), the larger of the two numbers in principle 12.
 - **The timings and easings above become Kiseki's motion tokens** at the design system step, so every effect uses the same values.
+- **Exits ease out too:** never ease-in on UI, because it delays the moment people watch (this replaces the ease-in in principle 5). Principle 18 still applies: exits are faster than entrances.
+- **Bounce only after a drag or flick;** anything opened by a tap settles with no overshoot.
+- **Nothing grows from nothing:** start at 90–97% size, never below 0.9.
+- **Companion skills:** apple-design, animation-performance, gestures, mobile-native and review-animations (from emilkowalski/skills, with their own Kiseki notes) go deeper on springs, gestures, performance and mobile polish.

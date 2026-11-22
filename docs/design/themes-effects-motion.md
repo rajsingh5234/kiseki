@@ -33,6 +33,8 @@
 - **Several effects per theme:** the theme sets the defaults and intensity; the user can switch individual effects on or off (in Advanced), and those choices apply across themes.
 - **Rules:** animate only cheap properties (position, scale, transparency); with reduce motion, motion becomes a quick fade or instant change and nothing is lost; an effect is never the only signal; battery saver or a slow phone scales effects down.
 - **Nothing jumps:** every visible change animates: things appearing, leaving, growing, shrinking, moving or reordering, content changing in place (a number, a status, a tick) and light/dark or theme switches. Size and position changes use FLIP (measure before and after, then animate with position and scale only), so even layout changes stay on the compositor. Smooth means steady frames, not slow: timings follow the motion rules (100–150 ms feedback, 150–300 ms most changes, exits faster than entrances), and reduce motion turns movement into a quick fade. The playground's smoothness check flags any change that snaps.
+- **Easing and springs:** entrances and exits both ease out (strong custom curves), and exits are faster; springs have no bounce by default, with a slight bounce (about 0.2) only when a drag or flick ends; things start at 90–97% size, never from nothing.
+- **Design skills:** ux-motion plus five skills from [emilkowalski/skills](https://github.com/emilkowalski/skills) (apple-design, animation-performance, gestures, mobile-native, review-animations), copied into `.claude/skills/` at a pinned commit with their MIT licence; each has Kiseki notes that keep our rules first.
 
 ## Motion engine (decided 2026-11-21)
 

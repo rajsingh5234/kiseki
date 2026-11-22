@@ -2,7 +2,14 @@
    "$schema": "./node_modules/oxfmt/configuration_schema.json",
    "tabWidth": 3,
    "sortImports": true,
-   "ignorePatterns": ["pnpm-lock.yaml"],
+   "ignorePatterns": [
+      "pnpm-lock.yaml",
+      ".claude/skills/apple-design/**",
+      ".claude/skills/animation-performance/**",
+      ".claude/skills/gestures/**",
+      ".claude/skills/mobile-native/**",
+      ".claude/skills/review-animations/**"
+   ],
    "overrides": [
       {
          "files": ["*.md"],
