@@ -12,7 +12,7 @@
 0. **Design session (the UI discussion), right after planning:** design direction, the UPSC user's 3 themes, key screens (Today, finishing an item, first launch and setting up, syllabus, routine), each designed at every screen size before the next, every screen size, motion. All discussions are finished before building starts.
 1. **CI:** minimal first (install, lint, typecheck, test, audit on every push), proven reliable before automatic deployment.
 2. **Postgres + Drizzle**, including the row-level security decision.
-3. **`packages/contracts`:** shared request and response types.
+3. **`packages/contracts`:** shared request and response types, plus a **generated API reference page** (OpenAPI from the contracts, shown with a viewer such as Scalar), so the API docs can never go stale.
 4. **The web app skeleton:** React + React Router, installable basics, and the **minimum real theme**: the token contract, **Lavender light and dark**, **follow the system**, and the **flat** surface style. Enough to catch problems that only appear live, such as a white "theme flash" before dark mode loads on a phone; clay, glass, effects and the motion engine come in step 7.
 5. **Hosting + automatic deployment:** every merge to `main` goes live.
 6. **Sign-in**, plus **one automated end-to-end test** in a real browser.
