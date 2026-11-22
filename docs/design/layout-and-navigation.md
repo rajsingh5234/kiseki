@@ -38,3 +38,5 @@
 **v0.1:** the defaults, plus one choice on phones: a **flat bottom bar** (the default) or one with a **cradle** around the Study button; both are renderers of the same navigation data. Other customisation (placement, order) comes later, without a rebuild.
 
 **Study button (phones):** in the centre of the bottom bar in both styles (inside the flat bar, raised in the cradle). It starts study mode for the current block, the same as the arrow on the "Now" card. Between blocks it offers the next one ("Start Environment early?"); when the day's blocks are done, it opens a topic search to record something else. Tablets and desktop place it when those layouts are designed.
+
+**Bottom bar details:** five same-size outline icons (26px, one line weight): Today (calendar), Syllabus (list tree), Study (open book, in the theme's accent colour as the main action), Progress (bar chart), You (person). Where content meets the bar, a soft fade dissolves it into the page (Apple's scroll edge effect) instead of a hard edge or divider line, and the bar casts a soft shadow so it reads as a floating layer.
