@@ -9,7 +9,7 @@
 
 ## Order (decided 2026-11-21)
 
-0. **Design session (the UI discussion), right after planning:** design direction, the UPSC user's 3 themes, key screens (Today, finishing an item, syllabus, routine), every screen size, motion. All discussions are finished before building starts.
+0. **Design session (the UI discussion), right after planning:** design direction, the UPSC user's 3 themes, key screens (Today, finishing an item, first launch and setting up, syllabus, routine), each designed at every screen size before the next, every screen size, motion. All discussions are finished before building starts.
 1. **CI:** minimal first (install, lint, typecheck, test, audit on every push), proven reliable before automatic deployment.
 2. **Postgres + Drizzle**, including the row-level security decision.
 3. **`packages/contracts`:** shared request and response types.
