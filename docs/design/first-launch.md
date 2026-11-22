@@ -13,3 +13,10 @@ Designs: [design canvas](https://claude.ai/artifact/NCpckrVSrxtNhVVmB2vWE1) (the
 ## Invite-only page
 
 - The same layout with an envelope illustration: "Kiseki is invite-only for now", the Google account used, "Ask the person who shared Kiseki with you to add this account", then "Use a different account" (our own button: Google's G only appears next to Google's own wording) and "Back to the start".
+
+## Choose your look (step 1 of setting up)
+
+- **One screen, right after the first sign-in:** "Choose your look", a live preview of the real Today screen that changes as choices are tapped, three style cards (Flat, Clay, Glass, each with a small swatch in its style) and a "Light or dark" switch (Auto, Light, Dark; "Auto follows your phone's setting"). Flat and Auto are pre-selected, so one tap on Continue is enough; everything can be changed later in You. The bottom bar style stays in Settings, to keep this screen to two choices.
+- **Every size:** stacked on phones and tablet portrait (preview of the top of Today), with Continue visible without scrolling on a 360×640 phone; split on tablet landscape and wider (a whole phone-sized preview on the left, choices on the right).
+- **A thin progress bar** shows where she is in setting up.
+- **When more themes arrive,** a theme row joins this screen above the styles.
