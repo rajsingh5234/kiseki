@@ -34,6 +34,8 @@ Six short steps after the first sign-in, each asking only what the first day's p
    - **The questions are data owned by each track pack** (like its syllabus), so a new track brings its own questions without changing the app.
    - **No "rate yourself" level question:** self-ratings are unreliable (people who know less tend to overestimate), so we ask about facts and experience, and the revision engine learns the real level from her first weeks of answers. A placement quiz comes later, with smart quizzes.
 4. **Already covered?** Quickly mark subjects already studied, per track; "Skip for now" allowed.
+   - **The screen:** the track's subjects as a list (DSA: its patterns), each with a checkbox; nothing is ticked by default. Ticking one opens "Revised since?" (Not yet / Once / More) under it. "Skip for now" and Continue stay fixed at the bottom while the list scrolls (two columns on wide screens). Marking individual topics happens later in Syllabus.
+   - **What the planner does with it:** "studied, not revised yet" topics come back for a first revision spread over the first 2–3 weeks with a daily cap, so day 1 stays normal; "revised once / more" get a longer first gap. The first time each one comes back is a light check, so the engine confirms her real level instead of trusting the tick.
 5. **Your week:** pick a starting pattern (mornings, evenings, split day), then adjust the blocks.
 6. **Reminders:** our own short explanation first ("We'll nudge you when a study block starts"); only "Turn on" shows the browser's permission box, because a blocked permission can't be asked again. "Not now" is always fine; it can be turned on later in You.
 7. **Your first day is ready:** a short summary, then into Today.
