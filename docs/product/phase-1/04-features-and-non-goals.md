@@ -34,9 +34,9 @@ The test for each feature: without it, would either user go back to their old wa
 9. **Simple progress:** topic map (strength) + streak.
 10. **Works well on an Android phone and a laptop** (installable).
 11. **Notifications:** the study-session nudge (start now / in 10 min), basic study mode (focus screen + "turn on DND" prompt), the DND-off reminder, and notification settings (each on/off, nudge frequency). Needs web push and a per-user scheduler, chosen in topic 4.
-12. **Appearance settings:** appearance (follow system, always light, always dark), surface style (flat or clay), individual effects on or off, and text size (90%–150%), each with a live preview. See [design](../../design/).
+12. **Appearance settings:** appearance (follow system, always light, always dark), surface style (flat, clay or glass, from a one-tap switcher in You), the bottom bar style on phones (flat or with a cradle), individual effects on or off, and text size (90%–150%), each with a live preview. See [design](../../design/).
 
-**Designed, but built later:** nightly review, light day / day off, forecast + weekly report, photo notes (photos of handwritten notes or book pages, which need upload, storage and deletion) (v0.2 candidates); then weekly and monthly targets, custom trackers + card dashboard, quick revision, custom tracks, the "why not" answers, wellbeing hints and routine coaching, Advanced settings, the extension host (v0.1 loads track syllabi straight from data files) and installable themes, smart quizzes. Themes are decided in the UI discussion.
+**Designed, but built later:** nightly review, light day / day off, forecast + weekly report, photo notes (photos of handwritten notes or book pages, which need upload, storage and deletion) (v0.2 candidates); then weekly and monthly targets, custom trackers + card dashboard, quick revision, custom tracks, the "why not" answers, wellbeing hints and routine coaching, Advanced settings, the extension host (v0.1 loads track syllabi straight from data files) and installable themes, a new style each day, smart quizzes. Themes are decided in the UI discussion.
 
 ## Non-goals for Phase 1 (decided 2026-11-21)
 

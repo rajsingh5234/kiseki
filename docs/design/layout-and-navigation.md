@@ -35,4 +35,6 @@
 
 **Extensions on phones:** with only room for a few items in the bottom bar, extension places appear inside **You** (pinnable later); on tablets and desktop, the rail and sidebar list them.
 
-**v0.1:** the defaults only, built on navigation-as-data and renderers, so customisation is a later feature, not a rebuild.
+**v0.1:** the defaults, plus one choice on phones: a **flat bottom bar** (the default) or one with a **cradle** around the Study button; both are renderers of the same navigation data. Other customisation (placement, order) comes later, without a rebuild.
+
+**Study button (phones):** in the centre of the bottom bar in both styles (inside the flat bar, raised in the cradle). It starts study mode for the current block, the same as the arrow on the "Now" card. Between blocks it offers the next one ("Start Environment early?"); when the day's blocks are done, it opens a topic search to record something else. Tablets and desktop place it when those layouts are designed.

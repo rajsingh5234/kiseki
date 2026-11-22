@@ -45,7 +45,7 @@ Themes, surface styles and effects are **found automatically from their folders*
 
 - **Surface styles:** flat (default and fallback), clay, glass, brutalism (the high-contrast option); liquid glass later. Not neumorphism (low contrast, unclear buttons, weak in dark mode) or skeuomorphism (dated, heavy), except perhaps a "paper planner" theme later.
 - **Aesthetic:** minimalism as the base; brutalism. Not maximalism (fights focus).
-- **v0.1:** the Lavender family (light and dark), with flat and clay selectable; glass built behind a developer switch to prove the system with its hardest style; brutalism in v0.2.
+- ~~**v0.1:** the Lavender family (light and dark), with flat and clay selectable; glass built behind a developer switch to prove the system with its hardest style; brutalism in v0.2.~~ (Replaced by [decision 015](015-glass-in-v0.1-and-two-bottom-bars.md): glass is a normal choice in v0.1, with a one-tap style switcher.)
 - **Effects in v0.1:** glow on touch, springs (never on native scrolling), haptics, screen transitions, progress animation, rare celebration.
 
 ### Motion engine
