@@ -32,6 +32,7 @@
 - **Later:** skeleton loading, depth and parallax, an ambient background (off by default), sound (opt-in).
 - **Several effects per theme:** the theme sets the defaults and intensity; the user can switch individual effects on or off (in Advanced), and those choices apply across themes.
 - **Rules:** animate only cheap properties (position, scale, transparency); with reduce motion, motion becomes a quick fade or instant change and nothing is lost; an effect is never the only signal; battery saver or a slow phone scales effects down.
+- **Nothing jumps:** every visible change animates: things appearing, leaving, growing, shrinking, moving or reordering, content changing in place (a number, a status, a tick) and light/dark or theme switches. Size and position changes use FLIP (measure before and after, then animate with position and scale only), so even layout changes stay on the compositor. Smooth means steady frames, not slow: timings follow the motion rules (100–150 ms feedback, 150–300 ms most changes, exits faster than entrances), and reduce motion turns movement into a quick fade. The playground's smoothness check flags any change that snaps.
 
 ## Motion engine (decided 2026-11-21)
 
