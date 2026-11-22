@@ -10,5 +10,5 @@
 - **SVG coloured with theme tokens**, so every illustration recolours for every theme and for dark mode; each is checked in light and dark.
 - **Small files**, loaded only on the screen that shows them.
 - **Accessibility:** decorative illustrations are hidden from screen readers; one that carries meaning gets a text description.
-- **Later:** gently animated illustrations through the motion engine, respecting reduce motion.
+- **Animated illustrations:** the welcome screen's illustration animates in v0.1 (a first-time moment: books stack in with springs, sparkles appear; [motion prototype](https://claude.ai/artifact/LFSD68gXbx9khi89ukveJr)); the rest later. All through the motion engine, interruptible, never blocking a button, paused when off screen, and a quick fade with reduce motion. The final animation is designed at build time with research; ideas from the UPSC user: sparkles that shine continuously (without a slow rhythmic loop, which can cause motion sickness) and books that wobble when tapped.
 - **Source** (an open set with a clear licence, or an artist) is chosen at design time, with licences checked and recorded. AI-generated images are avoided unless their licence is clear, since copyright is uncertain and a consistent style is hard to keep.
