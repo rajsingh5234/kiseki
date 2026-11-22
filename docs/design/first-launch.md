@@ -40,6 +40,8 @@ Six short steps after the first sign-in, each asking only what the first day's p
 5. **Your week:** pick a starting pattern (mornings, evenings, split day), then adjust the blocks.
    - Designed in [Routine](routine.md): pick a starting pattern, then Looks good, or Adjust my week to open the editor.
 6. **Reminders:** our own short explanation first ("We'll nudge you when a study block starts"); only "Turn on" shows the browser's permission box, because a blocked permission can't be asked again. "Not now" is always fine; it can be turned on later in You.
+   - **The screen:** a small bell illustration, "Get a nudge when it's time to study", a realistic preview of the notification (Kiseki, "Polity at 6:00. Start study mode?", Start now / In 10 min), two short points (one nudge when a study session starts, never more than chosen; a reminder to turn Do Not Disturb off after studying), then Not now and Turn on reminders.
+   - **Chrome's lighter prompt** (from Chrome 155 on Android, 2026): the browser's own box is non-blocking and can time out unanswered, giving "not decided". So the app never assumes an answer: "allowed" shows "Reminders are on"; "not decided" or "Not now" shows "No problem. You can turn reminders on any time in You."; and the app keeps listening for a later "allowed", since Chrome's Site Controls lets her subscribe afterwards. A blocked permission is explained in You, with how to re-enable it in Chrome's site settings.
 7. **Your first day is ready:** a short summary, then into Today.
 
 - **No "Your name" step:** the first name comes from Google and can be changed in You.
