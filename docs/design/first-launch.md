@@ -38,6 +38,7 @@ Six short steps after the first sign-in, each asking only what the first day's p
    - **What the planner does with it:** "studied, not revised yet" topics come back for a first revision spread over the first 2–3 weeks with a daily cap, so day 1 stays normal; "revised once / more" get a longer first gap. The first time each one comes back is a light check, so the engine confirms her real level instead of trusting the tick.
    - **A look at the syllabus:** each subject row shows its topic count and a "See topics" link that opens a read-only list of that subject's topics (high-importance ones tagged), a full-screen sheet on phones and a dialog on wider screens. The full syllabus lives in the Syllabus tab, and the last setup screen links to it.
 5. **Your week:** pick a starting pattern (mornings, evenings, split day), then adjust the blocks.
+   - Designed in [Routine](routine.md): pick a starting pattern, then Looks good, or Adjust my week to open the editor.
 6. **Reminders:** our own short explanation first ("We'll nudge you when a study block starts"); only "Turn on" shows the browser's permission box, because a blocked permission can't be asked again. "Not now" is always fine; it can be turned on later in You.
 7. **Your first day is ready:** a short summary, then into Today.
 
