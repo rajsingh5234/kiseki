@@ -20,3 +20,22 @@ Designs: [design canvas](https://claude.ai/artifact/NCpckrVSrxtNhVVmB2vWE1) (the
 - **Every size:** stacked on phones and tablet portrait (preview of the top of Today), with Continue visible without scrolling on a 360×640 phone; split on tablet landscape and wider (a whole phone-sized preview on the left, choices on the right).
 - **A thin progress bar** shows where she is in setting up.
 - **When more themes arrive,** a theme row joins this screen above the styles.
+
+## Setting up (decided 2026-11-22)
+
+Six short steps after the first sign-in, each asking only what the first day's plan needs; a thin progress bar fills as she goes, and every step but the first has Back. Everything can be changed later in You.
+
+1. **Choose your look** (above).
+2. **Pick your tracks:** UPSC, DSA or both (multi-select cards).
+3. **About your prep,** one short screen per picked track (3–4 questions), including the target date and stage. Each question shows "How this shapes your plan".
+   - **UPSC:** target (next Prelims date pre-filled; Prelims / Mains / both), attempts (first / attempted before, how many), optional subject (from the list, or "not decided yet").
+   - **DSA:** target (an interview date, or "no fixed date"), problems solved so far (0, under 50, 50–200, 200+), language, goal (internship / first job / experienced role).
+   - **The questions are data owned by each track pack** (like its syllabus), so a new track brings its own questions without changing the app.
+   - **No "rate yourself" level question:** self-ratings are unreliable (people who know less tend to overestimate), so we ask about facts and experience, and the revision engine learns the real level from her first weeks of answers. A placement quiz comes later, with smart quizzes.
+4. **Already covered?** Quickly mark subjects already studied, per track; "Skip for now" allowed.
+5. **Your week:** pick a starting pattern (mornings, evenings, split day), then adjust the blocks.
+6. **Reminders:** our own short explanation first ("We'll nudge you when a study block starts"); only "Turn on" shows the browser's permission box, because a blocked permission can't be asked again. "Not now" is always fine; it can be turned on later in You.
+7. **Your first day is ready:** a short summary, then into Today.
+
+- **No "Your name" step:** the first name comes from Google and can be changed in You.
+- **"Add to home screen"** is offered later on Today, after a first real day, not during setup.
