@@ -12,7 +12,7 @@ Until now, changes were committed straight to `main`, and CI ran only afterwards
 - **GitHub flow, kept short (trunk-based):** every change, docs included, goes on a short-lived branch (hours to a day or two) and into `main` through a pull request; a merged branch is deleted.
 - **A ruleset "Protect main"** on the default branch:
   - `main` can't be deleted or force-pushed, and its history stays linear;
-  - a pull request is required, with **0 approvals**: GitHub doesn't allow approving your own pull request, and there is one human maintainer (as in Nuxt, Oxc and TanStack). The review happens before the pull request is opened, and the maintainer merges;
+  - a pull request is required, with **0 approvals**: GitHub doesn't allow approving your own pull request, and there is one human maintainer (as in Nuxt, Oxc and TanStack). The review happens before the pull request is opened; once the maintainer has approved the change and every check is green, the coding assistant (Claude Code) merges it (added 2026-11-23);
   - **squash merge only**: one pull request becomes one commit on `main`, titled in conventional format with its number, e.g. `feat: add timetable (#12)`;
   - required checks: `Lint, format and types`, `Tests`, `Dependency audit`, and no zizmor code-scanning alerts (as in Vitest);
   - a branch doesn't have to be updated each time `main` moves (as in Vite, Oxc and Turborepo);
