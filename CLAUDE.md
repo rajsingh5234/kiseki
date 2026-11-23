@@ -24,9 +24,9 @@
 ## Status
 
 - Foundation decided: [docs/decisions/001-foundation.md](docs/decisions/001-foundation.md) (stack, architecture and the reasons).
-- Done: tooling, the API base (config, logging, request IDs, health module, composition root, graceful shutdown, error handling; decisions [007](docs/decisions/007-api-foundation.md) and [009](docs/decisions/009-error-handling.md)), the design session ([docs/design/](docs/design/): look, themes, motion, and every key screen at all six sizes), and CI ([decision 017](docs/decisions/017-ci.md): lint, tests and audit on every push and pull request, proven to fail on bad code).
+- Done: tooling, the API base (config, logging, request IDs, health module, composition root, graceful shutdown, error handling; decisions [007](docs/decisions/007-api-foundation.md) and [009](docs/decisions/009-error-handling.md)), the design session ([docs/design/](docs/design/): look, themes, motion, and every key screen at all six sizes), CI ([decision 017](docs/decisions/017-ci.md): lint, tests, audit, zizmor and Renovate, proven to fail on bad code) and branch protection ([decision 018](docs/decisions/018-pull-request-workflow.md)).
 - Phase 1 plan agreed: [docs/product/phase-1/](docs/product/phase-1/README.md) (goal, core journey, v0.1 features and non-goals, foundation decisions [010](docs/decisions/010-sign-in-and-sessions.md)–[013](docs/decisions/013-data-model-concept.md), build order).
-- Next: the rest of CI (branch protection), then the setup steps (Postgres + Drizzle → contracts → web skeleton → hosting and automatic deploy → sign-in) that make the walking skeleton (with the real Lavender theme), then the design system (clay, glass, effects, motion engine, playground), then the v0.1 feature slices, as listed in the plan's "Build order".
+- Next: the setup steps (Postgres + Drizzle → contracts → web skeleton → hosting and automatic deploy → sign-in) that make the walking skeleton (with the real Lavender theme), then the design system (clay, glass, effects, motion engine, playground), then the v0.1 feature slices, as listed in the plan's "Build order".
 
 ## Folder structure (target)
 
@@ -89,6 +89,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Class fields hidden from outside use `private readonly` (TypeScript's `private`, not JavaScript's `#`), declared as fields and assigned in the constructor.
 - TypeScript is erasable-only: no `enum` (use `as const` objects), no constructor parameter properties (declare fields and assign them) ([decision 005](docs/decisions/005-typescript.md)).
 - Commit messages are conventional: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` (e.g. `feat: add timetable`).
+- Every change goes on a short-lived branch named after its type (e.g. `feat/timetable`, `docs/readme`) and reaches `main` through a pull request: the required checks must pass, merging is squash only, and the pull request title becomes the commit title ([decision 018](docs/decisions/018-pull-request-workflow.md)). Never push to `main` (the ruleset refuses it).
 
 ## Frontend conventions
 
