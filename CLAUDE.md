@@ -9,7 +9,7 @@
 3. **Step by step.** Never implement a whole feature at once.
 4. **One file at a time.** Write one file, explain what it does and why (teaching any new idea in it), and wait for review. Move to the next step only when the user has completely understood the current one.
 5. **Quality bar:** best practices, LLD, SOLID principles, suitable design patterns and a clean folder structure.
-6. **Plug-and-unplug modularity.** Depend on abstractions (interfaces), inject dependencies and keep modules loosely coupled. A module should be swappable or removable without changes elsewhere. Add an abstraction only when it solves a real coupling, testing, reuse or ownership problem, never just for symmetry.
+6. **Plug-and-unplug modularity.** Depend on abstractions (interfaces) at module boundaries and edges, inject dependencies and keep modules loosely coupled. A module should be swappable or removable without changes elsewhere. Add an abstraction only when it solves a real coupling, testing, reuse or ownership problem, never just for symmetry.
 7. **Proactive suggestions.** Raise improvements, better alternatives, and best tools and practices the user may not know yet, **without waiting to be asked**. Bring each one up **when it becomes relevant** (at the step that needs it), one topic at a time, never as a big list up front, with a recommended best approach. Then discuss the approaches in detail and decide together before adding it.
    **Skills too:** at the start of each step, check whether a skill would help me do it better: one from a strong, well-known source for that area (copied into `.claude/skills/` with its source and licence, like the motion skills), or our own once a pattern repeats (e.g. "a new API module the Kiseki way"). Suggest it with a recommendation and decide together; skip general skills that only repeat CLAUDE.md or common knowledge.
 8. **Model and effort reminders.** At the start of each task, and whenever the kind of work changes, start the reply with one line recommending the model and effort, e.g. `Suggested: Opus 5.5 · high`, plus a few words on why. If the current setting already fits, say so in that line. Guide:
@@ -59,6 +59,8 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 - Apps use packages; apps never import each other.
 - Extensions import only `extension-sdk`, `contracts` and `ui`; never apps or other extensions. The host knows extensions only through their manifests.
 - API layers: route → controller → service → repository → database. Controllers never touch repositories; services own business rules and transactions; repositories only read and write their own module's tables.
+- Interfaces only where they earn their place ([decision 020](docs/decisions/020-where-interfaces-go.md)): two or more real implementations (e.g. health checks, push vs email sender), an edge to an outside system (email, push, payments, the clock), or another module depending on this one (a small interface shaped by what that module needs, exported from its `index.ts`). Never an interface just to fake something in a test: test through the real thing. Controllers, and services used only inside their own module, are plain classes.
+- Repositories are plain classes and the only place Drizzle appears: their public methods take and return our own types, never Drizzle's (no `InferSelectModel` outside a repository), so the ORM can be replaced by rewriting repositories alone. They are tested against the real Postgres ([decision 019](docs/decisions/019-database-setup.md)). Postgres features (row-level security, `uuidv7()`, constraints) are used fully; the database itself isn't abstracted.
 - Errors ([decision 009](docs/decisions/009-error-handling.md)): throw `AppError` for expected problems, with a kind (never an HTTP status), a stable UPPER_SNAKE `code` and a message safe to show; wrap a lower-level error as its `cause`. Never catch errors in controllers just to answer them: the global handler sends Problem Details, and anything that isn't an `AppError` becomes a generic 500 with the details only in the logs.
 - Modules talk to each other only through their public `index.ts` (or events); never through another module's repository or tables. Lint blocks `#modules/<name>/<anything>` except `#modules/<name>/index.ts` (`no-restricted-imports`).
 - Web and API share request/response types only through `packages/contracts`.
@@ -77,7 +79,7 @@ Feature-based on both sides: everything about one feature lives in one folder wi
 **Naming**
 
 - Files: kebab-case with a role suffix, e.g. `task.service.ts`, `task.repository.ts`.
-- Contracts that classes implement: `interface` with an `I` prefix, e.g. `ITaskRepository`.
+- Contracts that classes implement: `interface` with an `I` prefix, e.g. `INotificationSender`, `IClock`.
 - Pure data shapes (DTOs, entities, `FieldError`): `type` with no prefix.
 - Classes and types: PascalCase.
 - Indentation: 3 spaces (the formatter, oxfmt, enforces it).
