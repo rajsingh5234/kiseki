@@ -1,0 +1,36 @@
+// Renovate opens pull requests that update our dependencies (decision 017).
+// Every update is checked by CI and merged by hand.
+{
+   $schema: "https://docs.renovatebot.com/renovate-schema.json",
+   extends: [
+      "config:recommended",
+      // Once a week (early Monday, UTC), so updates arrive in one batch.
+      "schedule:weekly",
+      // All minor and patch updates in one pull request; each major on its own.
+      "group:allNonMajor",
+      // Keep actions pinned to a commit hash and update the "# vX.Y.Z" comment with it.
+      "helpers:pinGitHubActionDigestsToSemver",
+   ],
+   labels: ["dependencies"],
+   // The same hold as pnpm's minimumReleaseAge (decision 004): never propose a version younger than a day.
+   // Security fixes skip this hold and the weekly schedule (Renovate's default).
+   minimumReleaseAge: "1 day",
+   // Remove duplicate copies of packages from the lockfile after each update.
+   postUpdateOptions: ["pnpmDedupe"],
+   // Also refresh the dependencies of our dependencies once a week, to pick up their fixes.
+   lockFileMaintenance: {
+      enabled: true,
+   },
+   packageRules: [
+      {
+         // Decision 003: upgrade Node and pnpm on purpose, so they get their own pull request.
+         matchDepNames: ["node", "pnpm"],
+         groupName: "Node and pnpm",
+      },
+      {
+         // The engines range in package.json is a rule we set, not a version to bump.
+         matchDepTypes: ["engines"],
+         enabled: false,
+      },
+   ],
+}
