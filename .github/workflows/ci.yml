@@ -38,12 +38,17 @@ jobs:
               node-version-file: .nvmrc
               cache: pnpm
          - name: Install dependencies
+           id: install
            run: pnpm install --frozen-lockfile
+         # Each check runs even if an earlier one failed, so one run reports every problem;
+         # but only after a successful install, or the errors would be noise.
          - name: Check formatting
            run: pnpm format:check
          - name: Lint
+           if: ${{ !cancelled() && steps.install.outcome == 'success' }}
            run: pnpm lint --deny-warnings
          - name: Typecheck
+           if: ${{ !cancelled() && steps.install.outcome == 'success' }}
            run: pnpm typecheck
 
    test:
