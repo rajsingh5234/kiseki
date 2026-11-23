@@ -39,4 +39,4 @@ Free, automatic protection against the most common real-world attacks, with no c
 
 - A rare false alarm from `trustPolicy` when a maintainer legitimately changes how they publish: check it, then add the package to `trustPolicyExclude`.
 - Approving install scripts (`allowBuilds`): approve only packages that really need them (e.g. `esbuild`), one by one, and say why in the commit.
-- A dependency-update bot and vulnerability alerts come when CI is set up. CI runs `pnpm audit`, and the bot opens a pull request when a fix for an exception above ships.
+- A dependency-update bot and vulnerability alerts come when CI is set up. CI runs `pnpm audit`, and the bot opens a pull request when a fix for an exception above ships. (Done 2026-11-23: Renovate and Dependabot alerts, see [decision 017](017-ci.md).)
