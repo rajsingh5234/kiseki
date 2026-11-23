@@ -1,5 +1,7 @@
 # Kiseki
 
+[![CI](https://github.com/rajsingh5234/kiseki/actions/workflows/ci.yml/badge.svg)](https://github.com/rajsingh5234/kiseki/actions/workflows/ci.yml)
+
 A study planner for long exam preparation: it plans each day, tracks what you've studied and brings topics back for revision before you forget them. UPSC first, then DSA (data structures and algorithms) interview prep.
 
 The name is Japanese 軌跡, "trajectory": the path you have travelled ([why this name](docs/decisions/002-product-name.md)).
